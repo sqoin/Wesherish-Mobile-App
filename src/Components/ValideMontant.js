@@ -10,9 +10,11 @@ class ValideMontant extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            memberPublickey:"",
-            memberPrivateKey:"",
-            simpleUserCode: this.props.route.params.userQRCode ? this.props.route.params.userQRCode : ""
+            venderPublickey:"",
+            venderPrivateKey:"",
+            //simpleUserCode:""
+            simpleUserPrivateKey: this.props.route.params.userQRCode ? this.props.route.params.userQRCode : "",
+            simpleUserPublickey:''
 
         }
     };
@@ -24,14 +26,14 @@ class ValideMontant extends Component {
                 return;
             }
         
-            this.setState({memberPublickey:JSON.parse(data).publickey})
-            AsyncStorage.getItem("connectedPrivatekey",(err,data)=>{
+           
+            AsyncStorage.getItem("connectedPrivatekey",(err,privatekey)=>{
                 if(err){
                     return;
                 }
             
     
-                this.setState({memberPrivateKey:data})
+                self.setState({venderPrivateKey :privatekey ,venderPublickey:JSON.parse(data).publickey})
             })
       
         })
@@ -43,13 +45,68 @@ class ValideMontant extends Component {
 
     }
 
-    burnDonationToken(vendeurprivateKey , vendeurPublickey , userkey){
+
+    onSuccess = (e) => {
+        this.setState({ simpleUserPrivateKey: ''+e.data });
+        this.getUserPublickeyByPrivateKey(''+e.data)
+       
+    }
+//approve Donation
+
+        approveDonation (){
+            let {venderPublickey , simpleUserPrivateKey , simpleUserPublickey}=this.state;
+            let data={
+           "from":venderPublickey,
+           "ngoAccount":simpleUserPublickey,
+           "amount":1,
+           "privateKey":simpleUserPrivateKey
+          
+                 }
+            const self=this;
+            fetch(urlBlockchaine +'api/approuveDonationTokenFunction' , {
+                method: "POST",
+                headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+                },
+                body: JSON.stringify(data)
+        
+            })
+            .then(function (response) {
+                if (response.ok) {
+                    response.json().then(function (data) {
+
+                        if (data.tx !==undefined){
+                            console.log("approved successfully! ")
+                            self.transferfromdonation()
+                        }
+                        else{
+                          console.log("approval failed! ")
+                        }
+                        
+    
+                    }).catch(err => { console.log(err) });
+    
+                } else {
+                    console.log('Network request for backoffice failed with response ' + response.status);
+    
+    
+                }
+            });
+    
+        }
+
+
+
+
+    burnDonationToken(){
+        let {venderPublickey , venderPrivateKey , simpleUserPublickey}=this.state;
 
         let data={
-            "address":"0x48cf5eCdB25635787c82d513c7f13d62abA1F1B4",
+            "address":simpleUserPublickey,
             "contenu":1,
-            "from":"0xB1014cF81c00caEb30534e0f90995Be726f8B36C",
-            "privateKey":"d900db4bc9128f868f8a249c22a43c499aed7e4694eca6214da5899b3eb45d17"
+            "from":venderPublickey,
+            "privateKey":venderPrivateKey
         }
         let self=this;
         fetch(urlBlockchaine + 'api/burnDonationTokenFunction', {
@@ -66,8 +123,12 @@ class ValideMontant extends Component {
             response.text().then(function (text) {
         
            
-            self.setState({ serverMessage: "data shared succefully" , balance:text}) 
-            console.log("this is the balance => "+self.state.balance)
+                if (data.err !==undefined){
+                    alert('the donation burn was failed , please try again! ')
+                }
+                else {
+                    alert ("The token burning process was successfully completed!" )
+                }
             
             }).catch(err => { console.log(err) });
             
@@ -83,17 +144,45 @@ class ValideMontant extends Component {
     }
 
 
-    //getUserBalance
+    //getUserPublickeyByPrivateKey (simpleUserPrivateKey)
+
+
+    getUserPublickeyByPrivateKey(PrivateKey){
+
+        const self=this;
+        fetch(urlBackEnd +'member/getUserByPrivateKey?privateKey=' + PrivateKey, {
+            method: "GET"
+    
+        })
+    
+            .then(function (response) {
+                if (response.ok) {
+                    response.json().then(function (json) {
+                     
+                       self.setState({simpleUserPublickey:data.publickey})   
+                       self.approveDonation();            
+                      }).catch(err => { console.log(err) });
+    
+                } else {
+                    console.log('Network request for backoffice failed with response ' + response.status);
+                    alert("verify your informations please !")
+                }
+            });
+    
+    
+     }
     
 
 
-    transferfromdonation(vendeurprivateKey , vendeurPublickey , userkey){
+    transferfromdonation(){
 
+
+        let {venderPublickey , simpleUserPrivateKey , simpleUserPublickey}=this.state;
         let data={
-            "recipient":"0x241037ba12eEf56f2DFfE32A2bF67bf49dbD6195",
+            "recipient": venderPublickey,
             "amount":1,
-            "from":"0x48cf5eCdB25635787c82d513c7f13d62abA1F1B4",
-            "privateKey":"4f4fe0167219001d6b9dcc02d5741f6164dc48ca1396e2be4169deab7104f06d"
+            "from":simpleUserPublickey,
+            "privateKey":simpleUserPrivateKey
         }
         let self=this;
         fetch(urlBlockchaine + 'api/transferFunction', {
@@ -110,8 +199,9 @@ class ValideMontant extends Component {
             response.text().then(function (text) {
         
            
-            self.setState({ serverMessage: "data shared succefully" , balance:text}) 
-            console.log("this is the balance => "+self.state.balance)
+          
+          
+              self.getbalance();
             
             }).catch(err => { console.log(err) });
             
@@ -124,6 +214,55 @@ class ValideMontant extends Component {
             }
             });
     
+    }
+
+
+
+       getbalance(){
+
+
+        let { simpleUserPrivateKey , simpleUserPublickey}=this.state;
+        let data={
+            "address":simpleUserPublickey,
+            "privateKey":simpleUserPrivateKey
+        }
+        let self=this;
+        fetch(urlBlockchaine + 'api/subscribeToBalance', {
+            method: "POST",
+            headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+            },
+            body: JSON.stringify(data)
+            })
+            
+            .then(function (response) {
+            if (response.ok) {
+            response.text().then(function (text) {
+        
+                if (text ===0){
+                    console.log("get balance successfully! ")
+                    self.burnDonationToken()
+                }
+                else{
+                  alert("get balance failed! ")
+                }
+
+
+        
+            
+            }).catch(err => { console.log(err) });
+            
+            } else {
+            
+            self.setState({ serverMessage: "error on shared data" })
+            console.log('Network request for backoffice failed with response ' + response.status);
+            
+            
+            }
+            });
+
+
     }
 
 

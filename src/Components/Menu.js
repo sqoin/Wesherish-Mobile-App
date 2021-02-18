@@ -24,12 +24,12 @@ class Menu extends Component {
             if(err){
                 return;
             }
-        
+            
             AsyncStorage.getItem("connectedPrivatekey",(err,privatekey)=>{
                 if(err){
                     return;
                 }
-        
+            
                 self.getBalance(privatekey,JSON.parse(dataUser).publickey)
             })
         })

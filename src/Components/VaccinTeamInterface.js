@@ -1,20 +1,44 @@
 import React, { Component } from 'react';
 import {
     View, TextInput, Text,
-    TouchableOpacity, Button, StyleSheet, ImageBackground
+    TouchableOpacity, Button, StyleSheet, ImageBackground , Alert,AsyncStorage
 } from 'react-native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
+
+import {urlBlockchaine , urlBackEnd} from '../../utils'
 
 class VaccinTeamInterface extends Component {
 
     constructor(props) {
         super(props)
         this.state = {
-            scannded: ""
+            simpleUserPublickey:'', 
+            simpleUserPrivateKey:'',
+            vaccinTeamPublickey:'',
+            vaccinTeamPrivateKey:''
         }
     };
 
     componentDidMount = () => {
+        let self=this;
+
+        AsyncStorage.getItem("connectedMember",(err,dataUser)=>{
+            if(err){
+                return;
+            }
+               
+            AsyncStorage.getItem("connectedPrivatekey",(err,privatekey)=>{
+                if(err){
+                    return;
+                }
+
+                self.setState({vaccinTeamPrivateKey :privatekey , vaccinTeamPublicKey: JSON.parse(dataUser).publickey})
+        
+            
+            })
+        })
+
+
 
     }
 
@@ -24,106 +48,140 @@ class VaccinTeamInterface extends Component {
     }
 
     onSuccess = (e) => {
-        this.setState({ scanned: ''+e.data });
-        console.log("-----------"+e.data);
+        this.setState({ simpleUserPrivateKey: ''+e.data });
+       this.getUserPublickeyByPrivateKey(''+e.data)
     }
-    
 
-    burnDonationToken(vendeurprivateKey , vendeurPublickey , userkey){
+       getUserPublickeyByPrivateKey(privateKey){
+
+        const self=this;
+        fetch(urlBackEnd +'member/getUserByPrivateKey?privateKey=' + privateKey, {
+            method: "GET"
+    
+        })
+    
+            .then(function (response) {
+                if (response.ok) {
+                    response.json().then(function (json) {
+                     
+                       self.setState({simpleUserPublickey:data.publickey}) 
+                       self.approveVaccin() ;             
+                      }).catch(err => { console.log(err) });
+    
+                } else {
+                    console.log('Network request for backoffice failed with response ' + response.status);
+                    alert("verify your informations please !")
+                }
+            });
+    
+    
+     }
+
+    //approve vaccin
+   approveVaccin (){
+       let {vaccinTeamPublicKey , simpleUserPrivateKey , simpleUserPublickey}=this.state;
+
+      // console.log (vaccinTeamPublicKey + " "+simpleUserPublickey + " "+simpleUserPrivateKey)
+
+      let data={
+        "ngoAccount":vaccinTeamPublicKey,
+        "from":simpleUserPublickey,
+        "amount":1,
+        "privateKey":simpleUserPrivateKey
+  
+         }
+       const self=this;
+       fetch(urlBlockchaine +'api/approuveVaccineTokenFunction' , {
+           method: "POST",
+           headers: {
+           "Content-Type": "application/json",
+           "Accept": "application/json"
+           },
+           body: JSON.stringify(data)
+   
+       })
+       .then(function (response) {
+           if (response.ok) {
+               response.json().then(function (data) {
+                   //console.log("++++++"+JSON.stringify(data))
+                   if (data.tx !==undefined){
+
+                       console.log("approved successfully! ")
+                       self.burnVaccinToken()
+                   }
+                   else{
+                     alert("approval failed, Try again! ")
+                   }
+                
+
+               }).catch(err => { console.log(err) });
+
+           } else {
+               console.log('Network request for backoffice failed with response ' + response.status);
+
+
+           }
+       });
+
+   }
+
+   burnVaccinToken(){
+
+    Alert.alert('Burn Vaccin ' , 'Are you sure about burning this token ?', [
+        {text:'NO' , onPress: ()=> alert("You didn't complete the burn process ! if you want to try again scan the code once again! ") , style:'cancel'},
+        {text:'YES' , onPress: ()=> this.ConfirmburnVaccinToken() }
+    ])
+
+   }
+    ConfirmburnVaccinToken(){
+
+
+        let {vaccinTeamPublicKey , vaccinTeamPrivateKey , simpleUserPublickey}=this.state;
 
         let data={
-            "address":"0x48cf5eCdB25635787c82d513c7f13d62abA1F1B4",
+            "address":simpleUserPublickey,
+            "from":vaccinTeamPublicKey,
             "contenu":1,
-            "from":"0xB1014cF81c00caEb30534e0f90995Be726f8B36C",
-            "privateKey":"d900db4bc9128f868f8a249c22a43c499aed7e4694eca6214da5899b3eb45d17"
-        }
-        let self=this;
-        fetch(urlBlockchaine + 'api/burnDonationTokenFunction', {
-            method: "POST",
-            headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-            },
-            body: JSON.stringify(data)
-            })
-            
-            .then(function (response) {
-            if (response.ok) {
-            response.text().then(function (text) {
-        
+            "privateKey":vaccinTeamPrivateKey
            
-            self.setState({ serverMessage: "data shared succefully" , balance:text}) 
-            console.log("this is the balance => "+self.state.balance)
+                  }
+                const self=this;
+                fetch(urlBlockchaine +'api/burnVaccineTokenFunction' , {
+                    method: "POST",
+                    headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                    },
+                    body: JSON.stringify(data)
             
-            }).catch(err => { console.log(err) });
-            
-            } else {
-            
-            self.setState({ serverMessage: "error on shared data" })
-            console.log('Network request for backoffice failed with response ' + response.status);
-            
-            
-            }
-            });
-    
+                })
+                .then(function (response) {
+                    if (response.ok) {
+                        response.json().then(function (data) {
+
+                            if (data.err !==undefined){
+                                alert('the vaccin burn was failed , please try again! ')
+                            }
+                            else {
+                                alert ("The token burning process was successfully completed!" )
+                            }
+                         
+         
+                        }).catch(err => { console.log(err) });
+         
+                    } else {
+                        console.log('Network request for backoffice failed with response ' + response.status);
+         
+         
+                    }
+                });
+
+
     }
 
 
 
 
-    transferfromdonation(){
-
-        let data={
-            "recipient":"0x241037ba12eEf56f2DFfE32A2bF67bf49dbD6195",
-            "amount":1,
-            "from":"0x48cf5eCdB25635787c82d513c7f13d62abA1F1B4",
-            "privateKey":"4f4fe0167219001d6b9dcc02d5741f6164dc48ca1396e2be4169deab7104f06d"
-        }
-        let self=this;
-        fetch(urlBlockchaine + 'api/transferFunction', {
-            method: "POST",
-            headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-            },
-            body: JSON.stringify(data)
-            })
-            
-            .then(function (response) {
-            if (response.ok) {
-            response.text().then(function (text) {
-        
-           
-            self.setState({ serverMessage: "data shared succefully" , balance:text}) 
-            console.log("this is the balance => "+self.state.balance)
-            
-            }).catch(err => { console.log(err) });
-            
-            } else {
-            
-            self.setState({ serverMessage: "error on shared data" })
-            console.log('Network request for backoffice failed with response ' + response.status);
-            
-            
-            }
-            });
-    
-    }
-    allToAction() {
-        var self = this;
-        if
-            (self.state.productdetails.action_name == DISCOUNT_CODE) {
-            this.props.navigation.navigate('DiscountCode');
-        }
-        else if (self.state.productdetails.action_name == VIDEO) {
-
-            this.props.navigation.navigate('ProductVideo');
-
-        }
-        else if (self.state.productdetails.action_name == NEWS_LETTERS) {
-            this.props.navigation.navigate('NewLetter');
-        }
-    }
     render() {
         return (
             <View style={styles.container}>

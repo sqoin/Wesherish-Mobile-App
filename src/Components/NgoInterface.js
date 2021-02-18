@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {
     View, TextInput, Text,
-    TouchableOpacity, Button, StyleSheet, ImageBackground,AsyncStorage
+    TouchableOpacity, Button, StyleSheet, ImageBackground,AsyncStorage, Alert
 } from 'react-native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 
@@ -11,49 +11,184 @@ class NgoInterface extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            scannded: "",
-            memberPublickey:"",
-            memberPrivateKey:""
+        //for test
+          //  simpleUserPublickey:'0x48cf5eCdB25635787c82d513c7f13d62abA1F1B4',
+            //simpleUserPrivateKey:'4f4fe0167219001d6b9dcc02d5741f6164dc48ca1396e2be4169deab7104f06d',
+            simpleUserPublickey:'',
+            simpleUserPrivateKey:'',
+            ngoPublickey:'',
+            ngoPrivateKey:'',
+            vendeurBalance:0
         }
     };
 
     componentDidMount = () => {
+        let self=this;
 
         AsyncStorage.getItem("connectedMember",(err,data)=>{
             if(err){
                 return;
             }
         
-            this.setState({memberPublickey:JSON.parse(data).publickey})
-            AsyncStorage.getItem("connectedPrivatekey",(err,data)=>{
-                if(err){
-                    return;
-                }
             
+                AsyncStorage.getItem("connectedPrivatekey",(err,privatekey)=>{
+                    if(err){
+                        return;
+                    }
+
+                    self.setState({ngoPrivateKey :privatekey ,ngoPublickey:JSON.parse(data).publickey})
+                   
     
-                this.setState({memberPrivateKey:data})
+              
             })
       
         })
+
+        //for test
+        ///self.getBalance(this.state.simpleUserPrivateKey ,this.state.simpleUserPublickey )
+                    
        
 
     }
-
-
+    
     componentWillUnmount() {
 
     }
 
+      
+    onSuccess = (e) => {
+        this.setState({ simpleUserPrivateKey: ''+e.data });
+        this.getUserPublickeyByPrivateKey(''+e.data)
+       
+    }
 
 
 
-    burnDonationToken(ngoPrivateKey, ngoPublickey , vendeurPublickey){
+getUserPublickeyByPrivateKey(privatekey){
+
+    const self=this;
+    fetch(urlBackEnd +'member/getUserByPrivateKey?privateKey=' + privatekey, {
+        method: "GET"
+
+    })
+
+        .then(function (response) {
+            if (response.ok) {
+                response.json().then(function (json) {
+                 
+                   self.setState({simpleUserPublickey:data.publickey}) 
+                   self.getBalance(self.state.simpleUserPrivateKey ,data.publickey )            
+                  }).catch(err => { console.log(err) });
+
+            } else {
+                console.log('Network request for backoffice failed with response ' + response.status);
+                alert("verify your informations please !")
+            }
+        });
+
+
+ }
+
+//getBalance
+getBalance(privateKey , publickey){
+    let data={
+        "address":publickey,
+        "privateKey":privateKey
+    }
+    let self=this;
+    fetch(urlBlockchaine + 'api/subscribeToBalance', {
+        method: "POST",
+        headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+        },
+        body: JSON.stringify(data)
+        })
+        
+        .then(function (response) {
+        if (response.ok) {
+        response.text().then(function (balance) {
+            
+            self.setState({ vendeurBalance: balance })
+            self.approveDonation() ; 
+        }).catch(err => { console.log(err) });
+        
+        } else {
+        
+        console.log('Network request for backoffice failed with response ' + response.status);
+        
+        
+        }
+        });
+
+}
+
+//approve donation 
+
+approveDonation (){
+
+    let {ngoPublickey , simpleUserPrivateKey , simpleUserPublickey , vendeurBalance}=this.state;
+    console.log(vendeurBalance )
+    let data={
+   "from":simpleUserPublickey,
+   "ngoAccount":ngoPublickey,
+   "amount":vendeurBalance,
+   "privateKey":simpleUserPrivateKey
+  
+         }
+       const self=this;
+       fetch(urlBlockchaine +'api/approuveDonationTokenFunction' , {
+           method: "POST",
+           headers: {
+           "Content-Type": "application/json",
+           "Accept": "application/json"
+           },
+           body: JSON.stringify(data)
+   
+       })
+       .then(function (response) {
+           if (response.ok) {
+               response.json().then(function (data) {
+              //  console.log(JSON.stringify(data))
+                if (data.tx !==undefined){
+                    console.log("approved successfully! ")
+                    self.burnDonationToken()
+                }
+                else{
+                 alert("approval failed , Try again please! ")
+                }
+                
+
+               }).catch(err => { console.log(err) });
+
+           } else {
+               console.log('Network request for backoffice failed with response ' + response.status);
+
+
+           }
+       });
+
+   }
+
+
+   burnDonationToken(){
+
+    Alert.alert('Burn Donation ' , 'Are you sure about burning this token ?', [
+        {text:'NO' , onPress: ()=> alert("You didn't complete the burn process ! if you want to try again scan the code once again! ") , style:'cancel'},
+        {text:'YES' , onPress: ()=> this.ConfirmburnDonationToken() }
+    ])
+
+   }
+
+    ConfirmburnDonationToken(){
+
+        let {ngoPublickey , ngoPrivateKey , simpleUserPublickey , vendeurBalance}=this.state;
 
         let data={
-            "address":"0x48cf5eCdB25635787c82d513c7f13d62abA1F1B4",
-            "contenu":1,
-            "from":"0xB1014cF81c00caEb30534e0f90995Be726f8B36C",
-            "privateKey":"d900db4bc9128f868f8a249c22a43c499aed7e4694eca6214da5899b3eb45d17"
+            "address":simpleUserPublickey,
+            "contenu":vendeurBalance,
+            "from":ngoPublickey,
+            "privateKey":ngoPrivateKey
         }
         let self=this;
         fetch(urlBlockchaine + 'api/burnDonationTokenFunction', {
@@ -67,11 +202,16 @@ class NgoInterface extends Component {
             
             .then(function (response) {
             if (response.ok) {
-            response.text().then(function (text) {
+            response.json().then(function (data) {
         
+                console.log(JSON.stringify(data))
            
-            self.setState({ serverMessage: "data shared succefully" , balance:text}) 
-            console.log("this is the balance => "+self.state.balance)
+                if (data.err !==undefined){
+                    alert('the donation burn was failed , please try again! ')
+                }
+                else {
+                    alert ("The token burning process was successfully completed!" )
+                }
             
             }).catch(err => { console.log(err) });
             
@@ -86,12 +226,7 @@ class NgoInterface extends Component {
     
     }
 
-    
-    onSuccess = (e) => {
-        this.setState({ scanned: e.data });
-    //Alert (Are you sure you wnt to burn this wallet ?)
-        this.burnDonationToken(ngoPrivateKey, ngoPublickey , vendeurPublickey)
-    }
+  
     render() {
         return (
             <View style={styles.container}>
