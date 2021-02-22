@@ -12,15 +12,20 @@ class VaccinTeamInterface extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            simpleUserPublickey:'', 
-            simpleUserPrivateKey:'',
+
+            simpleUserPublickey:'0x48cf5eCdB25635787c82d513c7f13d62abA1F1B4',
+            simpleUserPrivateKey:'4f4fe0167219001d6b9dcc02d5741f6164dc48ca1396e2be4169deab7104f06d',
+           // simpleUserPublickey:'', 
+          // simpleUserPrivateKey:'',
             vaccinTeamPublickey:'',
-            vaccinTeamPrivateKey:''
+            vaccinTeamPrivateKey:'',
+            vaccinNumber:0
         }
     };
 
     componentDidMount = () => {
         let self=this;
+       
 
         AsyncStorage.getItem("connectedMember",(err,dataUser)=>{
             if(err){
@@ -33,7 +38,10 @@ class VaccinTeamInterface extends Component {
                 }
 
                 self.setState({vaccinTeamPrivateKey :privatekey , vaccinTeamPublicKey: JSON.parse(dataUser).publickey})
-        
+
+
+                //for test
+               self.getBalance(this.state.simpleUserPublickey) 
             
             })
         })
@@ -52,6 +60,52 @@ class VaccinTeamInterface extends Component {
        this.getUserPublickeyByPrivateKey(''+e.data)
     }
 
+
+    //getBalance
+  getBalance( publickey){
+     
+    let data={
+        "address":publickey,
+       // "privateKey":privateKey
+    }
+    let self=this;
+    fetch(urlBlockchaine + 'api/getBalanceOfVaccin', {
+        method: "POST",
+        headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+        },
+        body: JSON.stringify(data)
+        })
+        
+        .then(function (response) {
+        if (response.ok) {
+         response.text().then(function (balance) {
+            console.log(balance)
+
+            let balanceValue = (balance * 1000000000000000000)
+            
+            self.setState({ vaccinNumber: balanceValue })
+
+            if (balanceValue === 0){
+
+                alert("No more vaccine for this  citizen ! ")
+            }else{
+                self.approveVaccin() ;
+            }
+              
+        }).catch(err => { console.log(err) });
+        
+        } else {
+        
+        console.log('Network request for backoffice failed with response ' + response.status);
+        
+        
+        }
+        });
+
+      }
+
        getUserPublickeyByPrivateKey(privateKey){
 
         const self=this;
@@ -62,10 +116,10 @@ class VaccinTeamInterface extends Component {
     
             .then(function (response) {
                 if (response.ok) {
-                    response.json().then(function (json) {
+                    response.json().then(function (data) {
                      
                        self.setState({simpleUserPublickey:data.publickey}) 
-                       self.approveVaccin() ;             
+                       self.getBalance(data.publickey) ;            
                       }).catch(err => { console.log(err) });
     
                 } else {
@@ -81,7 +135,7 @@ class VaccinTeamInterface extends Component {
    approveVaccin (){
        let {vaccinTeamPublicKey , simpleUserPrivateKey , simpleUserPublickey}=this.state;
 
-      // console.log (vaccinTeamPublicKey + " "+simpleUserPublickey + " "+simpleUserPrivateKey)
+       console.log (this.state.vaccinNumber)
 
       let data={
         "ngoAccount":vaccinTeamPublicKey,
@@ -91,7 +145,7 @@ class VaccinTeamInterface extends Component {
   
          }
        const self=this;
-       fetch(urlBlockchaine +'api/approuveVaccineTokenFunction' , {
+       fetch(urlBlockchaine +'api/approveVaccineTokenFunction' , {
            method: "POST",
            headers: {
            "Content-Type": "application/json",
@@ -103,7 +157,7 @@ class VaccinTeamInterface extends Component {
        .then(function (response) {
            if (response.ok) {
                response.json().then(function (data) {
-                   //console.log("++++++"+JSON.stringify(data))
+                   console.log("++++++"+JSON.stringify(data))
                    if (data.tx !==undefined){
 
                        console.log("approved successfully! ")
@@ -158,7 +212,7 @@ class VaccinTeamInterface extends Component {
                 .then(function (response) {
                     if (response.ok) {
                         response.json().then(function (data) {
-
+                           console.log("---"+JSON.stringify(data))
                             if (data.err !==undefined){
                                 alert('the vaccin burn was failed , please try again! ')
                             }

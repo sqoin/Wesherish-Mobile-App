@@ -30,7 +30,7 @@ class Menu extends Component {
                     return;
                 }
             
-                self.getBalance(privatekey,JSON.parse(dataUser).publickey)
+                self.getBalance(JSON.parse(dataUser).publickey)
             })
         })
        
@@ -45,13 +45,13 @@ class Menu extends Component {
 
 
     //getBalnce
-    getBalance(privateKey , publickey){
+    getBalance(publickey){
         let data={
             "address":publickey,
-            "privateKey":privateKey
+           
         }
         let self=this;
-        fetch(urlBlockchaine + 'api/subscribeToBalance', {
+        fetch(urlBlockchaine + 'api/getBalanceOfDonation', {
             method: "POST",
             headers: {
             "Content-Type": "application/json",
@@ -62,9 +62,10 @@ class Menu extends Component {
             
             .then(function (response) {
             if (response.ok) {
-            response.text().then(function (text) {
+            response.text().then(function (balance) {
         
-            self.setState({ balance:text}) 
+             let balanceValue =  balance * 1000000000000000000
+            self.setState({ balance:balanceValue}) 
             
             }).catch(err => { console.log(err) });
             

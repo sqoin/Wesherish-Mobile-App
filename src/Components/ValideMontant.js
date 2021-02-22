@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import {
     View, TextInput, Text,
-    TouchableOpacity, Button, StyleSheet, ImageBackground
+    TouchableOpacity, Button, StyleSheet, ImageBackground,AsyncStorage
 } from 'react-native';
 
 
+import {urlBlockchaine , urlBackEnd} from '../../utils'
 class ValideMontant extends Component {
 
     constructor(props) {
@@ -12,14 +13,20 @@ class ValideMontant extends Component {
         this.state = {
             venderPublickey:"",
             venderPrivateKey:"",
-            //simpleUserCode:""
-            simpleUserPrivateKey: this.props.route.params.userQRCode ? this.props.route.params.userQRCode : "",
-            simpleUserPublickey:''
+           // simpleUserPrivateKey: this.props.route.params.userQRCode ? this.props.route.params.userQRCode : "",
+            //simpleUserPublickey:'',
+          simpleUserPublickey:'0x48cf5eCdB25635787c82d513c7f13d62abA1F1B4',
+          simpleUserPrivateKey:'4f4fe0167219001d6b9dcc02d5741f6164dc48ca1396e2be4169deab7104f06d',
+
+            simpleUserBalance:0,
+            vendeurCalculatedAmount:''
 
         }
     };
 
     componentDidMount = () => {
+
+        let self=this ;
 
         AsyncStorage.getItem("connectedMember",(err,data)=>{
             if(err){
@@ -46,24 +53,20 @@ class ValideMontant extends Component {
     }
 
 
-    onSuccess = (e) => {
-        this.setState({ simpleUserPrivateKey: ''+e.data });
-        this.getUserPublickeyByPrivateKey(''+e.data)
-       
-    }
-//approve Donation
-
+   
+       //approve Donation
         approveDonation (){
-            let {venderPublickey , simpleUserPrivateKey , simpleUserPublickey}=this.state;
+            let {venderPublickey , simpleUserPrivateKey , simpleUserPublickey , vendeurCalculatedAmount}=this.state;
+            console.log("amount to be given =>  "+vendeurCalculatedAmount + "user amount "+this.state.simpleUserBalance)
             let data={
-           "from":venderPublickey,
-           "ngoAccount":simpleUserPublickey,
-           "amount":1,
-           "privateKey":simpleUserPrivateKey
+                "from":simpleUserPublickey,
+                "ngoAccount":venderPublickey,
+                "amount":vendeurCalculatedAmount ,
+                "privateKey":simpleUserPrivateKey
           
                  }
             const self=this;
-            fetch(urlBlockchaine +'api/approuveDonationTokenFunction' , {
+            fetch(urlBlockchaine +'api/approveDonationTokenFunction' , {
                 method: "POST",
                 headers: {
                 "Content-Type": "application/json",
@@ -76,6 +79,7 @@ class ValideMontant extends Component {
                 if (response.ok) {
                     response.json().then(function (data) {
 
+                        console.log("++++++++++++++++++ "+JSON.stringify(data))
                         if (data.tx !==undefined){
                             console.log("approved successfully! ")
                             self.transferfromdonation()
@@ -100,11 +104,11 @@ class ValideMontant extends Component {
 
 
     burnDonationToken(){
-        let {venderPublickey , venderPrivateKey , simpleUserPublickey}=this.state;
+        let {venderPublickey , venderPrivateKey , simpleUserPublickey , vendeurCalculatedAmount}=this.state;
 
         let data={
             "address":simpleUserPublickey,
-            "contenu":1,
+            "contenu":vendeurCalculatedAmount,
             "from":venderPublickey,
             "privateKey":venderPrivateKey
         }
@@ -120,9 +124,9 @@ class ValideMontant extends Component {
             
             .then(function (response) {
             if (response.ok) {
-            response.text().then(function (text) {
+            response.json().then(function (data) {
         
-           
+                console.log("++++++++++++++++++3 "+JSON.stringify(data))
                 if (data.err !==undefined){
                     alert('the donation burn was failed , please try again! ')
                 }
@@ -134,7 +138,7 @@ class ValideMontant extends Component {
             
             } else {
             
-            self.setState({ serverMessage: "error on shared data" })
+           
             console.log('Network request for backoffice failed with response ' + response.status);
             
             
@@ -160,7 +164,7 @@ class ValideMontant extends Component {
                     response.json().then(function (json) {
                      
                        self.setState({simpleUserPublickey:data.publickey})   
-                       self.approveDonation();            
+                       self.getbalance(data.publickey);            
                       }).catch(err => { console.log(err) });
     
                 } else {
@@ -177,10 +181,10 @@ class ValideMontant extends Component {
     transferfromdonation(){
 
 
-        let {venderPublickey , simpleUserPrivateKey , simpleUserPublickey}=this.state;
+        let {venderPublickey , simpleUserPrivateKey , simpleUserPublickey , vendeurCalculatedAmount}=this.state;
         let data={
             "recipient": venderPublickey,
-            "amount":1,
+            "amount":vendeurCalculatedAmount,
             "from":simpleUserPublickey,
             "privateKey":simpleUserPrivateKey
         }
@@ -196,12 +200,14 @@ class ValideMontant extends Component {
             
             .then(function (response) {
             if (response.ok) {
-            response.text().then(function (text) {
-        
-           
-          
-          
-              self.getbalance();
+            response.json().then(function (data) {
+                console.log("++++++++++++++++++2 "+JSON.stringify(data))
+                if (data.err !==undefined){
+                    alert('the transfer  was failed , please try again! ')
+                }
+                else {
+                   self.burnDonationToken()
+                }
             
             }).catch(err => { console.log(err) });
             
@@ -218,16 +224,14 @@ class ValideMontant extends Component {
 
 
 
-       getbalance(){
+       getbalance(publickey){
 
-
-        let { simpleUserPrivateKey , simpleUserPublickey}=this.state;
         let data={
-            "address":simpleUserPublickey,
-            "privateKey":simpleUserPrivateKey
+            "address":publickey,
+         
         }
         let self=this;
-        fetch(urlBlockchaine + 'api/subscribeToBalance', {
+        fetch(urlBlockchaine + 'api/getBalanceOfDonation', {
             method: "POST",
             headers: {
             "Content-Type": "application/json",
@@ -238,16 +242,19 @@ class ValideMontant extends Component {
             
             .then(function (response) {
             if (response.ok) {
-            response.text().then(function (text) {
-        
-                if (text ===0){
-                    console.log("get balance successfully! ")
-                    self.burnDonationToken()
-                }
-                else{
-                  alert("get balance failed! ")
-                }
+            response.text().then(function (balance) {
 
+                let balanceValue = (balance * 1000000000000000000)
+            
+                self.setState({ simpleUserBalance: balanceValue })
+    
+                if (balanceValue === 0){
+    
+                    alert("the citizen has no balance ! ")
+                }else{
+                    self.approveDonation() ;
+                }
+                  
 
         
             
@@ -264,6 +271,19 @@ class ValideMontant extends Component {
 
 
     }
+
+    validateTransfer(){
+
+        //this.getUserPublickeyByPrivateKey(this.state.simpleUserPrivateKey)
+      
+        //forTest
+        this.getbalance(this.state.simpleUserPublickey )
+    } 
+    annulerTransfer(){ 
+        this.props.navigation.navigate('Menu') 
+    }
+
+
 
 
     render() {
@@ -308,28 +328,32 @@ class ValideMontant extends Component {
 
                      </Text> 
                    <TextInput
+                          
                            label="Email"
                            style={{backgroundColor:'#FFF', alignItems: 'center', justifyContent:'center', marginRight: '22%',
                            marginLeft: "21%",
                            marginTop: '10%',}}
+                           onChangeText={(text) => this.setState({vendeurCalculatedAmount :text})}
+                           keyboardType = 'numeric'
+                           
      
                           />
+
+
                    </View>
                
                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent:'space-between', marginRight: '22%',
                             marginLeft: "22%",  marginTop: '10%',}}>
             <Button
-                style={{width: 50}}
+                disabled={!this.state.vendeurCalculatedAmount}
+                style={{width: 50,backgroundColor: this.state.disabled ? 'red': 'green'}}
                 title='Valider'
-                onPress={() => {
-                console.log('Bouton cliqué !');
-              }}>
+                onPress= {() => this.validateTransfer()}>
             </Button>
             <Button
                 style={{width: 10}}
                 title='Annuler'
-                onPress={() => { this.props.navigation.navigate('Menu') 
-              }}>
+                onPress={() => this.annulerTransfer()}>
             </Button>
         </View>
                    </View>

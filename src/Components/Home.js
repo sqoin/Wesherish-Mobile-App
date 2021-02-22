@@ -26,7 +26,7 @@ function Home(props) {
                 <Button style={styles.item} title="LoginQR" onPress={() => props.navigation.navigate('LoginQR')}></Button>
                 <Button style={styles.item} title="VaccinTeamInterface" onPress={() => props.navigation.navigate('VaccinTeamInterface')}></Button>
                 {/* <Button style={styles.item} title="ScanQRPage" onPress={() => props.navigation.navigate('WeCoin')}></Button> */}
-                <Button style={styles.item} title="ValiderTransfer" onPress={() => props.navigation.navigate('ValiderTransfer')}></Button>
+                <Button style={styles.item} title="ValideMontant" onPress={() => props.navigation.navigate('ValideMontant')}></Button>
                 <Button style={styles.item} title="NgoInterface" onPress={() => props.navigation.navigate('NgoInterface')}></Button>
             </View>
 

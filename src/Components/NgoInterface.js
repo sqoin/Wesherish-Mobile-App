@@ -11,9 +11,9 @@ class NgoInterface extends Component {
     constructor(props) {
         super(props)
         this.state = {
-        //for test
-          //  simpleUserPublickey:'0x48cf5eCdB25635787c82d513c7f13d62abA1F1B4',
-            //simpleUserPrivateKey:'4f4fe0167219001d6b9dcc02d5741f6164dc48ca1396e2be4169deab7104f06d',
+           //for test
+           // simpleUserPublickey:'0x48cf5eCdB25635787c82d513c7f13d62abA1F1B4',
+          // simpleUserPrivateKey:'4f4fe0167219001d6b9dcc02d5741f6164dc48ca1396e2be4169deab7104f06d',
             simpleUserPublickey:'',
             simpleUserPrivateKey:'',
             ngoPublickey:'',
@@ -45,7 +45,7 @@ class NgoInterface extends Component {
         })
 
         //for test
-        ///self.getBalance(this.state.simpleUserPrivateKey ,this.state.simpleUserPublickey )
+        //self.getBalance(this.state.simpleUserPublickey )
                     
        
 
@@ -77,7 +77,7 @@ getUserPublickeyByPrivateKey(privatekey){
                 response.json().then(function (json) {
                  
                    self.setState({simpleUserPublickey:data.publickey}) 
-                   self.getBalance(self.state.simpleUserPrivateKey ,data.publickey )            
+                   self.getBalance(data.publickey )            
                   }).catch(err => { console.log(err) });
 
             } else {
@@ -90,13 +90,13 @@ getUserPublickeyByPrivateKey(privatekey){
  }
 
 //getBalance
-getBalance(privateKey , publickey){
+getBalance( publickey){
     let data={
         "address":publickey,
-        "privateKey":privateKey
+       // "privateKey":privateKey
     }
     let self=this;
-    fetch(urlBlockchaine + 'api/subscribeToBalance', {
+    fetch(urlBlockchaine + 'api/getBalanceOfDonation', {
         method: "POST",
         headers: {
         "Content-Type": "application/json",
@@ -108,9 +108,18 @@ getBalance(privateKey , publickey){
         .then(function (response) {
         if (response.ok) {
         response.text().then(function (balance) {
+
+            let balanceValue = (balance * 1000000000000000000)
             
-            self.setState({ vendeurBalance: balance })
-            self.approveDonation() ; 
+            self.setState({ vendeurBalance: balanceValue })
+
+            if (balanceValue === 0){
+
+                alert("the vendeur has no balance ! ")
+            }else{
+                self.approveDonation() ;
+            }
+              
         }).catch(err => { console.log(err) });
         
         } else {
@@ -132,12 +141,12 @@ approveDonation (){
     let data={
    "from":simpleUserPublickey,
    "ngoAccount":ngoPublickey,
-   "amount":vendeurBalance,
+   "amount":vendeurBalance ,
    "privateKey":simpleUserPrivateKey
   
          }
        const self=this;
-       fetch(urlBlockchaine +'api/approuveDonationTokenFunction' , {
+       fetch(urlBlockchaine +'api/approveDonationTokenFunction' , {
            method: "POST",
            headers: {
            "Content-Type": "application/json",
@@ -149,7 +158,7 @@ approveDonation (){
        .then(function (response) {
            if (response.ok) {
                response.json().then(function (data) {
-              //  console.log(JSON.stringify(data))
+              // console.log(JSON.stringify(data))
                 if (data.tx !==undefined){
                     console.log("approved successfully! ")
                     self.burnDonationToken()
@@ -204,7 +213,7 @@ approveDonation (){
             if (response.ok) {
             response.json().then(function (data) {
         
-                console.log(JSON.stringify(data))
+               // console.log("------- "+JSON.stringify(data))
            
                 if (data.err !==undefined){
                     alert('the donation burn was failed , please try again! ')
