@@ -13,11 +13,11 @@ class ValideMontant extends Component {
         this.state = {
             venderPublickey:"",
             venderPrivateKey:"",
-           // simpleUserPrivateKey: this.props.route.params.userQRCode ? this.props.route.params.userQRCode : "",
-            //simpleUserPublickey:'',
-          simpleUserPublickey:'0x48cf5eCdB25635787c82d513c7f13d62abA1F1B4',
-          simpleUserPrivateKey:'4f4fe0167219001d6b9dcc02d5741f6164dc48ca1396e2be4169deab7104f06d',
-
+            simpleUserPrivateKey: this.props.route.params.userQRCode ? this.props.route.params.userQRCode : "",
+            simpleUserPublickey:'',
+         // simpleUserPublickey:'0x48cf5eCdB25635787c82d513c7f13d62abA1F1B4',
+          //simpleUserPrivateKey:'4f4fe0167219001d6b9dcc02d5741f6164dc48ca1396e2be4169deab7104f06d',
+            executed : false,
             simpleUserBalance:0,
             vendeurCalculatedAmount:''
 
@@ -86,12 +86,16 @@ class ValideMontant extends Component {
                         }
                         else{
                           console.log("approval failed! ")
+                          self.setState({ executed : false})
                         }
                         
     
-                    }).catch(err => { console.log(err) });
+                    }).catch(err => {
+                        self.setState({ executed : false})
+                        console.log(err) });
     
                 } else {
+                    self.setState({ executed : false})
                     console.log('Network request for backoffice failed with response ' + response.status);
     
     
@@ -129,16 +133,22 @@ class ValideMontant extends Component {
                 console.log("++++++++++++++++++3 "+JSON.stringify(data))
                 if (data.err !==undefined){
                     alert('the donation burn was failed , please try again! ')
+                    self.setState({ executed : false})
                 }
                 else {
+                    self.setState({ executed : false})
                     alert ("The token burning process was successfully completed!" )
+                    self.props.navigation.navigate('Menu') 
+                    
                 }
             
-            }).catch(err => { console.log(err) });
+            }).catch(err => { 
+                self.setState({ executed : false})
+                console.log(err) });
             
             } else {
             
-           
+                self.setState({ executed : false})
             console.log('Network request for backoffice failed with response ' + response.status);
             
             
@@ -148,12 +158,13 @@ class ValideMontant extends Component {
     }
 
 
-    //getUserPublickeyByPrivateKey (simpleUserPrivateKey)
 
 
     getUserPublickeyByPrivateKey(PrivateKey){
 
         const self=this;
+
+        self.setState({ executed : true})
         fetch(urlBackEnd +'member/getUserByPrivateKey?privateKey=' + PrivateKey, {
             method: "GET"
     
@@ -165,9 +176,12 @@ class ValideMontant extends Component {
                      
                        self.setState({simpleUserPublickey:data.publickey})   
                        self.getbalance(data.publickey);            
-                      }).catch(err => { console.log(err) });
+                      }).catch(err => {
+                        self.setState({ executed : false})  
+                        console.log(err) });
     
                 } else {
+                    self.setState({ executed : false})
                     console.log('Network request for backoffice failed with response ' + response.status);
                     alert("verify your informations please !")
                 }
@@ -204,16 +218,19 @@ class ValideMontant extends Component {
                 console.log("++++++++++++++++++2 "+JSON.stringify(data))
                 if (data.err !==undefined){
                     alert('the transfer  was failed , please try again! ')
+                    self.setState({ executed : false})
                 }
                 else {
                    self.burnDonationToken()
                 }
             
-            }).catch(err => { console.log(err) });
+            }).catch(err => { 
+                self.setState({ executed : false})
+                console.log(err) });
             
             } else {
             
-            self.setState({ serverMessage: "error on shared data" })
+                self.setState({ executed : false})
             console.log('Network request for backoffice failed with response ' + response.status);
             
             
@@ -225,6 +242,10 @@ class ValideMontant extends Component {
 
 
        getbalance(publickey){
+
+
+
+        //this.setState({ executed: true })
 
         let data={
             "address":publickey,
@@ -251,6 +272,7 @@ class ValideMontant extends Component {
                 if (balanceValue === 0){
     
                     alert("the citizen has no balance ! ")
+                    self.setState({ executed : false})
                 }else{
                     self.approveDonation() ;
                 }
@@ -258,11 +280,13 @@ class ValideMontant extends Component {
 
         
             
-            }).catch(err => { console.log(err) });
+            }).catch(err => {
+                self.setState({ executed : false})
+                console.log(err) });
             
             } else {
             
-            self.setState({ serverMessage: "error on shared data" })
+            self.setState({ executed : false})
             console.log('Network request for backoffice failed with response ' + response.status);
             
             
@@ -274,10 +298,10 @@ class ValideMontant extends Component {
 
     validateTransfer(){
 
-        //this.getUserPublickeyByPrivateKey(this.state.simpleUserPrivateKey)
+        this.getUserPublickeyByPrivateKey(this.state.simpleUserPrivateKey)
       
         //forTest
-        this.getbalance(this.state.simpleUserPublickey )
+       // this.getbalance(this.state.simpleUserPublickey )
     } 
     annulerTransfer(){ 
         this.props.navigation.navigate('Menu') 
@@ -345,10 +369,10 @@ class ValideMontant extends Component {
                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent:'space-between', marginRight: '22%',
                             marginLeft: "22%",  marginTop: '10%',}}>
             <Button
-                disabled={!this.state.vendeurCalculatedAmount}
+                disabled={!this.state.vendeurCalculatedAmount || this.state.executed }
                 style={{width: 50,backgroundColor: this.state.disabled ? 'red': 'green'}}
-                title='Valider'
-                onPress= {() => this.validateTransfer()}>
+                title={!this.state.executed ?'Valider' : 'waiting'}              
+                 onPress= {() => this.validateTransfer()}>
             </Button>
             <Button
                 style={{width: 10}}

@@ -28,6 +28,8 @@ function Home(props) {
                 {/* <Button style={styles.item} title="ScanQRPage" onPress={() => props.navigation.navigate('WeCoin')}></Button> */}
                 <Button style={styles.item} title="ValideMontant" onPress={() => props.navigation.navigate('ValideMontant')}></Button>
                 <Button style={styles.item} title="NgoInterface" onPress={() => props.navigation.navigate('NgoInterface')}></Button>
+                <Button style={styles.item} title="WelcomeVaccin" onPress={() => props.navigation.navigate('WelcomeVaccin')}></Button>
+                <Button style={styles.item} title="WelcomeNgo" onPress={() => props.navigation.navigate('WelcomeNgo')}></Button>
             </View>
 
 

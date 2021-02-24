@@ -14,6 +14,8 @@ import ScanQRPage from './src/Components/VaccinTeamInterface';
 import NgoInterface from './src/Components/NgoInterface';
 import VaccinTeamInterface from './src/Components/VaccinTeamInterface';
 import ScanQRVendeur from './src/Components/ScanQRVendeur';
+import  WelcomeVaccin  from './src/Components/WelcomeVaccin';
+import  WelcomeNgo  from './src/Components/WelcomeNgo';
 
 class App extends Component {
   render() {
@@ -21,7 +23,7 @@ class App extends Component {
 
     return (
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home" screenOptions={{
+        <Stack.Navigator initialRouteName="LoginQR" screenOptions={{
           headerShown: false
         }} >
           <Stack.Screen name="Home" component={Home} />
@@ -35,6 +37,8 @@ class App extends Component {
           <Stack.Screen name="NgoInterface" component={NgoInterface} />
           <Stack.Screen name="VaccinTeamInterface" component={VaccinTeamInterface} />
           <Stack.Screen name="ScanQRVendeur" component={ScanQRVendeur} />
+          <Stack.Screen name="WelcomeVaccin" component={WelcomeVaccin} />
+          <Stack.Screen name="WelcomeNgo" component={WelcomeNgo} />
 
           
         </Stack.Navigator>

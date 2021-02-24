@@ -77,8 +77,18 @@ getUserPublickeyByPrivateKey(privatekey){
                 response.json().then(function (json) {
                  
                    self.setState({simpleUserPublickey:data.publickey}) 
-                   self.getBalance(data.publickey )            
-                  }).catch(err => { console.log(err) });
+
+                   if (data.publickey === undefined){
+
+                    alert("check your informations ! there is no user with this privatekey in our plateform")
+                    self.props.navigation.navigate('WelcomeNgo')
+
+                   }else{
+                    self.getBalance(data.publickey )  
+                   }
+                            
+                  }).catch(err => { console.log(err)
+                    self.props.navigation.navigate('WelcomeNgo') });
 
             } else {
                 console.log('Network request for backoffice failed with response ' + response.status);
@@ -120,7 +130,8 @@ getBalance( publickey){
                 self.approveDonation() ;
             }
               
-        }).catch(err => { console.log(err) });
+        }).catch(err => { console.log(err);
+            self.props.navigation.navigate('WelcomeNgo') });
         
         } else {
         
@@ -165,10 +176,12 @@ approveDonation (){
                 }
                 else{
                  alert("approval failed , Try again please! ")
+                 self.props.navigation.navigate('WelcomeNgo')
                 }
                 
 
-               }).catch(err => { console.log(err) });
+               }).catch(err => { console.log(err);
+                self.props.navigation.navigate('WelcomeNgo') });
 
            } else {
                console.log('Network request for backoffice failed with response ' + response.status);
@@ -217,12 +230,16 @@ approveDonation (){
            
                 if (data.err !==undefined){
                     alert('the donation burn was failed , please try again! ')
+                    self.props.navigation.navigate('WelcomeNgo')
                 }
                 else {
                     alert ("The token burning process was successfully completed!" )
+                    self.props.navigation.navigate('WelcomeNgo')
                 }
             
-            }).catch(err => { console.log(err) });
+            }).catch(err => {
+                self.props.navigation.navigate('WelcomeNgo');
+                 console.log(err) });
             
             } else {
             
@@ -248,24 +265,22 @@ approveDonation (){
                         }}>
                             Ngo Interface
                     </Text>
+
                         <TouchableOpacity style={{
                             marginRight: '0%',
-                            marginLeft: "38%",
+                            marginLeft: "10%",
                             marginTop: '5%',
+                            backgroundColor: "#2b2343",borderRadius: 5
                         }}
-                            onPress={() => { this.props.navigation.navigate('Settings') }}
+                            
                         >
-                            <ImageBackground
-                                //source={{ uri: this.state.companyLogo }}
-                                source={require('../assetes/x.png')}
-                                style={{
-                                    width: 30, height: 30,
-                                    // borderWidth: 1,
-                                    //borderColor: 'black',
+                           <Button
 
-                                    //9borderWidth: 1
-                                }}
-                            ></ImageBackground>
+                                 color="#2b2343"
+                                 style={{width: 70 }}
+                                 title='Log out'
+                                 onPress={() => { this.props.navigation.navigate('LoginQR') }}>
+                            </Button>
                         </TouchableOpacity>
                     </View>
                 </View>

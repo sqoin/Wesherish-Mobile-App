@@ -13,10 +13,10 @@ class VaccinTeamInterface extends Component {
         super(props)
         this.state = {
 
-            simpleUserPublickey:'0x48cf5eCdB25635787c82d513c7f13d62abA1F1B4',
-            simpleUserPrivateKey:'4f4fe0167219001d6b9dcc02d5741f6164dc48ca1396e2be4169deab7104f06d',
-           // simpleUserPublickey:'', 
-          // simpleUserPrivateKey:'',
+            //simpleUserPublickey:'0x48cf5eCdB25635787c82d513c7f13d62abA1F1B4',
+           // simpleUserPrivateKey:'4f4fe0167219001d6b9dcc02d5741f6164dc48ca1396e2be4169deab7104f06d',
+            simpleUserPublickey:'', 
+           simpleUserPrivateKey:'',
             vaccinTeamPublickey:'',
             vaccinTeamPrivateKey:'',
             vaccinNumber:0
@@ -41,7 +41,7 @@ class VaccinTeamInterface extends Component {
 
 
                 //for test
-               self.getBalance(this.state.simpleUserPublickey) 
+               //self.getBalance(this.state.simpleUserPublickey) 
             
             })
         })
@@ -90,11 +90,14 @@ class VaccinTeamInterface extends Component {
             if (balanceValue === 0){
 
                 alert("No more vaccine for this  citizen ! ")
+               
             }else{
                 self.approveVaccin() ;
             }
               
-        }).catch(err => { console.log(err) });
+        }).catch(err => {
+            self.props.navigation.navigate('WelcomeVaccin')
+            console.log(err) });
         
         } else {
         
@@ -120,11 +123,14 @@ class VaccinTeamInterface extends Component {
                      
                        self.setState({simpleUserPublickey:data.publickey}) 
                        self.getBalance(data.publickey) ;            
-                      }).catch(err => { console.log(err) });
+                      }).catch(err => {
+                        self.props.navigation.navigate('WelcomeVaccin')  
+                        console.log(err) });
     
                 } else {
                     console.log('Network request for backoffice failed with response ' + response.status);
                     alert("verify your informations please !")
+                    self.props.navigation.navigate('WelcomeVaccin')
                 }
             });
     
@@ -164,7 +170,9 @@ class VaccinTeamInterface extends Component {
                        self.burnVaccinToken()
                    }
                    else{
+                   
                      alert("approval failed, Try again! ")
+                     self.props.navigation.navigate('WelcomeVaccin')
                    }
                 
 
@@ -215,9 +223,11 @@ class VaccinTeamInterface extends Component {
                            console.log("---"+JSON.stringify(data))
                             if (data.err !==undefined){
                                 alert('the vaccin burn was failed , please try again! ')
+                                self.props.navigation.navigate('WelcomeVaccin')
                             }
                             else {
                                 alert ("The token burning process was successfully completed!" )
+                                self.props.navigation.navigate('WelcomeVaccin')
                             }
                          
          
@@ -246,8 +256,24 @@ class VaccinTeamInterface extends Component {
                             marginTop: '5%', marginLeft: '30%', fontWeight: 'bold',
                             color: '#FFF', fontSize: 20, textAlign: 'center'
                         }}>
-                            {/* QRCodeScanner */}
+                          Vaccin Interface
                     </Text>
+                    <TouchableOpacity style={{
+                            marginRight: '0%',
+                            marginLeft: "13%",
+                            marginTop: '5%',
+                            backgroundColor: "#2b2343",borderRadius: 5
+                        }}
+                            
+                        >
+                           <Button
+
+                                 color="#2b2343"
+                                 style={{width: 70 }}
+                                 title='Log out'
+                                 onPress={() => { this.props.navigation.navigate('LoginQR') }}>
+                            </Button>
+                        </TouchableOpacity>
                     </View>
                 </View>
                 <View style={styles.body}>

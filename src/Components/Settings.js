@@ -164,6 +164,33 @@ class testPage extends Component {
                             A propos de
                     </Text>
                     </View>
+                    <TouchableOpacity onPress={() => { this.props.navigation.navigate('LoginQR') }}
+                        style={{
+                            marginTop: '1%', marginLeft: '0%', flexDirection: "row",
+                            backgroundColor: "#2b2343", width: "100%", height: "15%",
+                            borderRadius: 5
+                        }}>
+
+                        <ImageBackground
+                            //source={{ uri: this.state.companyLogo }}
+                            source={require('../assetes/x3.png')}
+                            style={{
+                                width: 30, height: 30,
+                                // borderWidth: 1,
+                                //borderColor: 'black',
+                                marginRight: '0%',
+                                marginLeft: "5%",
+                                marginTop: '4%',
+                                //9borderWidth: 1
+                            }}
+                        ></ImageBackground>
+                        <Text style={{
+                            marginTop: '5%', marginLeft: '3%',
+                            color: '#FFF', fontSize: 16, textAlign: 'center'
+                        }}>
+                            Log out
+                    </Text>
+                    </TouchableOpacity>
 
                 </View>
                 <View style={styles.footer}>

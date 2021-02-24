@@ -17,7 +17,8 @@ class LoginQR extends Component {
 
     componentDidMount = () => {
 
-        this.getUserByPrivateKey('d900db4bc9128f868f8a249c22a43c499aed7e4694eca6214da5899b3eb45d17')
+        //for test
+        //this.getUserByPrivateKey('d900db4bc9128f868f8a249c22a43c499aed7e4694eca6214da5899b3eb45d17')
     }
 
 
@@ -27,6 +28,7 @@ class LoginQR extends Component {
 
     onSuccess = (e) => {
         this.setState({ scanned: e.data });
+        this.getUserByPrivateKey( ''+e.data )
     }
 
 
@@ -165,8 +167,9 @@ class LoginQR extends Component {
         .then(function (response) {
             if (response.ok) {
                 response.json().then(function (json) {
+                    console.log("result login => "+JSON.stringify(json))
                     let member =json[0];
-                     if (member.length ===0){
+                     if (json.length ===0){
                         alert("verify your informations please !")
                      }
                     
@@ -174,7 +177,7 @@ class LoginQR extends Component {
 
                         AsyncStorage.setItem("connectedMember",JSON.stringify(member))
                         AsyncStorage.setItem("connectedPrivatekey",privateKey)
-                       console.log("role => "+JSON.stringify(member))
+                     
    
                       
                         if (member.role ==='ngo' ){
