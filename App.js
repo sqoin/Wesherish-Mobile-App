@@ -16,6 +16,8 @@ import VaccinTeamInterface from './src/Components/VaccinTeamInterface';
 import ScanQRVendeur from './src/Components/ScanQRVendeur';
 import  WelcomeVaccin  from './src/Components/WelcomeVaccin';
 import  WelcomeNgo  from './src/Components/WelcomeNgo';
+import  WelcomeToApp  from './src/Components/WelcomeToApp';
+import  DouzeMots  from './src/Components/DouzeMots';
 
 class App extends Component {
   render() {
@@ -23,7 +25,7 @@ class App extends Component {
 
     return (
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="LoginQR" screenOptions={{
+        <Stack.Navigator initialRouteName="Home" screenOptions={{
           headerShown: false
         }} >
           <Stack.Screen name="Home" component={Home} />
@@ -39,6 +41,8 @@ class App extends Component {
           <Stack.Screen name="ScanQRVendeur" component={ScanQRVendeur} />
           <Stack.Screen name="WelcomeVaccin" component={WelcomeVaccin} />
           <Stack.Screen name="WelcomeNgo" component={WelcomeNgo} />
+          <Stack.Screen name="WelcomeToApp" component={WelcomeToApp} />
+          <Stack.Screen name="DouzeMots" component={DouzeMots} />
 
           
         </Stack.Navigator>
