@@ -256,11 +256,11 @@ class VaccinTeamInterface extends Component {
                             marginTop: '5%', marginLeft: '30%', fontWeight: 'bold',
                             color: '#FFF', fontSize: 20, textAlign: 'center'
                         }}>
-                          Vaccin Interface
+                         
                     </Text>
                     <TouchableOpacity style={{
                             marginRight: '0%',
-                            marginLeft: "13%",
+                            marginLeft: "50%",
                             marginTop: '5%',
                             backgroundColor: "#2b2343",borderRadius: 5
                         }}

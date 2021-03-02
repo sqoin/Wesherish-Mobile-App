@@ -11,6 +11,7 @@ class ValideMontant extends Component {
     constructor(props) {
         super(props)
         this.state = {
+           
             venderPublickey:"",
             venderPrivateKey:"",
             simpleUserPrivateKey: this.props.route.params.userQRCode ? this.props.route.params.userQRCode : "",
@@ -320,7 +321,7 @@ class ValideMontant extends Component {
                             marginTop: '5%', marginLeft: '37%', fontWeight: 'bold',
                             color: '#FFF', fontSize: 20, textAlign: 'center'
                         }}>
-                        Valider transfer
+                       
                     </Text>
                         <TouchableOpacity style={{
                             marginRight: '0%',
@@ -348,7 +349,7 @@ class ValideMontant extends Component {
                 <View style={{marginTop: '0%'}}>
                    <Text style={{  marginTop: '20%', marginLeft: '0%',
                             color: '#FFF', fontSize: 26, textAlign: 'center' } }>
-                               Entre Votre Montant :
+                               veuillez entrer le montant pour la transaction
 
                      </Text> 
                    <TextInput

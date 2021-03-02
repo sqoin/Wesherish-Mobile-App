@@ -115,7 +115,7 @@ class Menu extends Component {
                                 marginTop: '0%', marginLeft: '0%', fontWeight: 'bold',
                                 color: '#fff', fontSize: 14, textAlign: 'center'
                             }}>
-                               {this.state.balance} ETH 
+                               {this.state.balance} Wsh 
 
                                 
                     </Text>
@@ -195,7 +195,7 @@ class Menu extends Component {
                                 marginTop: '0%', marginLeft: '0%',
                                 color: '#fff', fontSize: 20, fontWeight: 'bold'
                             }}>
-                             E
+                             W
                             </Text>
                         </View>
                         <View style={{ marginTop: '0%', marginLeft: '2%', flexDirection: "column", justifyContent: 'center' }}>
@@ -203,13 +203,13 @@ class Menu extends Component {
                                 marginTop: '0%', marginLeft: '0%',
                                 color: '#fff', fontSize: 24
                             }}>
-                                EthereumCoin
+                                WesharishCoin
                     </Text>
                             <Text style={{
                                 marginTop: '0%', marginLeft: '0%',
                                 color: '#fff', fontSize: 14
                             }}>
-                               {this.state.balance} ETH
+                               {this.state.balance} Wsh
                     </Text>
 
                         </View>

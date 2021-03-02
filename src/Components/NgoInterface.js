@@ -263,12 +263,12 @@ approveDonation (){
                             marginTop: '5%', marginLeft: '40%', fontWeight: 'bold',
                             color: '#FFF', fontSize: 20, textAlign: 'center'
                         }}>
-                            Ngo Interface
+                            
                     </Text>
 
                         <TouchableOpacity style={{
                             marginRight: '0%',
-                            marginLeft: "10%",
+                            marginLeft: "40%",
                             marginTop: '5%',
                             backgroundColor: "#2b2343",borderRadius: 5
                         }}

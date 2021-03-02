@@ -68,9 +68,9 @@ class WelcomeNgo extends Component {
                 <View style={styles.body}>
                
                 <View style={{marginTop: '0%'}}>
-                   <Text style={{  marginTop: '0%', marginLeft: '30%',
+                   <Text style={{  marginTop: '0%', marginLeft: '2%',
                             color: '#FFF', fontSize: 26, textAlign: 'center' } }>
-                                you have to scan the privatekey in order to finish the process
+                                vous devez scanner la clé privée pour terminer le processus
                      </Text> 
                      
                      <Image source={require('../assetes/image.png')}
@@ -93,7 +93,7 @@ class WelcomeNgo extends Component {
                             marginTop: '5%', marginLeft: '40%',
                             color: '#FFF', fontSize: 16, textAlign: 'center'
                         }}>
-                            Next Step
+                           Étape suivante
                     </Text>
                     </TouchableOpacity>
           
