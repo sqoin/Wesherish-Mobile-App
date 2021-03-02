@@ -57,6 +57,7 @@ class VaccinTeamInterface extends Component {
 
     onSuccess = (e) => {
         this.setState({ simpleUserPrivateKey: ''+e.data });
+       // console.log('sssssssssssssssssssss------'+e.data)
        this.getUserPublickeyByPrivateKey(''+e.data)
     }
 
