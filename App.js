@@ -18,6 +18,10 @@ import  WelcomeVaccin  from './src/Components/WelcomeVaccin';
 import  WelcomeNgo  from './src/Components/WelcomeNgo';
 import  WelcomeToApp  from './src/Components/WelcomeToApp';
 import  DouzeMots  from './src/Components/DouzeMots';
+import  LoadingNgo  from './src/Components/LoadingNgo';
+import  Loadingvaccin  from './src/Components/Loadingvaccin';
+import  ConfirmationNgo  from './src/Components/ConfirmationNgo';
+import  InvalidAdress  from './src/Components/InvalidAdress';
 
 class App extends Component {
   render() {
@@ -25,7 +29,7 @@ class App extends Component {
 
     return (
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home" screenOptions={{
+        <Stack.Navigator initialRouteName="WelcomeToApp" screenOptions={{
           headerShown: false
         }} >
           <Stack.Screen name="Home" component={Home} />
@@ -43,7 +47,10 @@ class App extends Component {
           <Stack.Screen name="WelcomeNgo" component={WelcomeNgo} />
           <Stack.Screen name="WelcomeToApp" component={WelcomeToApp} />
           <Stack.Screen name="DouzeMots" component={DouzeMots} />
-
+          <Stack.Screen name="LoadingNgo" component={LoadingNgo} />
+          <Stack.Screen name="Loadingvaccin" component={Loadingvaccin} />
+          <Stack.Screen name="ConfirmationNgo" component={ConfirmationNgo} />
+          <Stack.Screen name="InvalidAdress" component={InvalidAdress} />
           
         </Stack.Navigator>
       </NavigationContainer >

@@ -96,17 +96,17 @@ class DouzeMots extends Component {
                             if (member.role ==='ngo' ){
                                 //navigate to ngo interface
                                
-                                self.isNgo(member.publickey,privateKey)
+                                self.isNgo(member.publickey)
                             }
                             else if (member.role ==='vendeur'){
                                //navigate to vendeur interface
                                
-                               self.isVendor(member.publickey,privateKey)
+                               self.isVendor(member.publickey)
                            }
                            else if (member.role ==='vaccinTeam'){
                                //navigate to vaccinTeam interface
                                
-                               self.isVaccinTeam(member.publickey,privateKey)
+                               self.isVaccinTeam(member.publickey)
                            }
                            else{
                                alert("verify your informations please !")
@@ -129,11 +129,10 @@ class DouzeMots extends Component {
     
    
     
-     isNgo (publickey, privateKey){
+     isNgo (publickey){
         let data={
-            "address":publickey,
-            "from":publickey,
-            "privateKey":privateKey
+            "address":publickey
+         
         }
         const self=this;
         fetch(urlBlockchaine +'api/isNgoFunction' , {
@@ -150,7 +149,7 @@ class DouzeMots extends Component {
                 response.text().then(function (text) {
                    // console.log("la reponse => "+text)
                     if (text ===true ){
-                        self.props.navigation.navigate('NgoInterface')
+                        self.props.navigation.navigate('WelcomeNgo')
                     }
                     else{
                         alert("Invalid Address , verify your informations!")
@@ -172,8 +171,7 @@ class DouzeMots extends Component {
     isVaccinTeam (publickey, privateKey){
         let data={
             "address":publickey,
-            "from":publickey,
-            "privateKey":privateKey}
+         }
 
 
         const self=this;
@@ -192,7 +190,7 @@ class DouzeMots extends Component {
                    /// console.log("la reponse => "+text)
                     if (text ===true ){
 
-                        self.props.navigation.navigate('VaccinTeamInterface')
+                        self.props.navigation.navigate('WelcomeVaccin')
                     }else{
                             alert("verify your informations")
                         }
@@ -209,12 +207,11 @@ class DouzeMots extends Component {
 
     }
 
-    isVendor (publickey  , privateKey){
+    isVendor (publickey  ){
         let data={
 
             "address":publickey,
-            "from":publickey,
-            "privateKey":privateKey
+          
         }
         const self=this;
         fetch(urlBlockchaine +'api/isVendorFunction', {

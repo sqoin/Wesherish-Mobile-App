@@ -32,6 +32,10 @@ function Home(props) {
                 <Button style={styles.item} title="WelcomeNgo" onPress={() => props.navigation.navigate('WelcomeNgo')}></Button>
                 <Button style={styles.item} title="WelcomeToApp" onPress={() => props.navigation.navigate('WelcomeToApp')}></Button>
                 <Button style={styles.item} title="DouzeMots" onPress={() => props.navigation.navigate('DouzeMots')}></Button>
+                <Button style={styles.item} title="LoadingNgo" onPress={() => props.navigation.navigate('LoadingNgo')}></Button>
+                <Button style={styles.item} title="Loadingvaccin" onPress={() => props.navigation.navigate('Loadingvaccin')}></Button>  
+                <Button style={styles.item} title="ConfirmationNgo" onPress={() => props.navigation.navigate('ConfirmationNgo')}></Button>
+                <Button style={styles.item} title="InvalidAdress" onPress={() => props.navigation.navigate('InvalidAdress')}></Button>
             </View>
 
 

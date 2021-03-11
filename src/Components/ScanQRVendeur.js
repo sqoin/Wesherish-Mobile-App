@@ -27,7 +27,7 @@ class ScanQRVendeur extends Component {
     onSuccess = (e) => {
         this.setState({ scanned: e.data });
         console.log("-----------"+e.data);
-        this.props.navigate('ValideMontant' ,  {userQRCode:''+e.data})
+        this.props.navigation.navigate('ValideMontant' ,  {userQRCode:''+e.data})
     }
     
 

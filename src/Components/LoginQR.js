@@ -11,7 +11,8 @@ class LoginQR extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            scannded: ""
+            scanned: ""
+           
         }
     };
 
@@ -29,19 +30,17 @@ class LoginQR extends Component {
     onSuccess = (e) => {
         this.setState({ scanned: e.data });
         this.getUserByPrivateKey( ''+e.data )
+     
     }
-
-
-
-
-    
-    isNgo (publickey, privateKey){
+     
+    isNgo (publickey){
         let data={
             "address":publickey,
-            "from":publickey,
-            "privateKey":privateKey
+            //"from":publickey,
+            //"privateKey":privateKey
         }
         const self=this;
+        ///this.setState({publickey:publickey})
         fetch(urlBlockchaine +'api/isNgoFunction' , {
             method: "POST",
             headers: {
@@ -54,20 +53,24 @@ class LoginQR extends Component {
         .then(function (response) {
             if (response.ok) {
                 response.text().then(function (text) {
-                   // console.log("la reponse => "+text)
-                    if (text ===true ){
-                        self.props.navigation.navigate('NgoInterface')
+                console.log("la reponse => "+text)
+                    if (text ==="true"){
+
+                        self.props.navigation.navigate('LoadingNgo' , {publickey : publickey})
                     }
                     else{
-                        alert("Invalid Address , verify your informations!")
+                       // console.log("Invalid Address , verify your informations!")
+                        self.props.navigation.navigate('InvalidAdress')
                     }
 
 
-                }).catch(err => { console.log(err) });
+                }).catch(err => { console.log(err)
+                    self.props.navigation.navigate('InvalidAdress')
+                });
 
             } else {
-                console.log('Network request for backoffice failed with response ' + response.status);
-
+                //console.log('Network request for backoffice failed with response ' + response.status);
+                self.props.navigation.navigate('InvalidAdress')
 
             }
         });
@@ -75,11 +78,10 @@ class LoginQR extends Component {
     }
 
 
-    isVaccinTeam (publickey, privateKey){
+    isVaccinTeam (publickey){
         let data={
-            "address":publickey,
-            "from":publickey,
-            "privateKey":privateKey}
+            "address":publickey
+        }
 
 
         const self=this;
@@ -95,32 +97,33 @@ class LoginQR extends Component {
         .then(function (response) {
             if (response.ok) {
                 response.text().then(function (text) {
-                   /// console.log("la reponse => "+text)
-                    if (text ===true ){
-
-                        self.props.navigation.navigate('VaccinTeamInterface')
+                    console.log("la reponse => "+text)
+                   if (text ==="true"){
+                        self.props.navigation.navigate('Loadingvaccin', {publickey : publickey})
                     }else{
-                            alert("verify your informations")
+                            console.log("Invalid Address , verify your informations!")
+                            self.props.navigation.navigate('InvalidAdress')
                         }
 
 
-                }).catch(err => { console.log(err) });
+                }).catch(err => { console.log(err)
+                    self.props.navigation.navigate('InvalidAdress')
+                });
 
             } else {
                 console.log('Network request for backoffice failed with response ' + response.status);
-
+                self.props.navigation.navigate('InvalidAdress')
 
             }
         });
 
     }
 
-    isVendor (publickey  , privateKey){
+    isVendor (publickey ){
         let data={
 
             "address":publickey,
-            "from":publickey,
-            "privateKey":privateKey
+         
         }
         const self=this;
         fetch(urlBlockchaine +'api/isVendorFunction', {
@@ -136,24 +139,29 @@ class LoginQR extends Component {
                 response.text().then(function (text) {
 
                    // console.log("la reponse => "+text)
-                    if (text ===true ){
+                    if (text ==="true" ){
 
                         self.props.navigation.navigate('Menu')
+                    }else{
+
+                        console.log("Invalid Address , verify your informations!")
+                        self.props.navigation.navigate('InvalidAdress')
                     }
 
 
-                }).catch(err => { console.log(err) });
+                }).catch(err => { console.log(err)
+                    self.props.navigation.navigate('InvalidAdress')
+                });
 
             } else {
                 console.log('Network request for backoffice failed with response ' + response.status);
+                self.props.navigation.navigate('InvalidAdress')
 
 
             }
         });
 
     }
-
-
 
 
  getUserByPrivateKey(privateKey){
@@ -170,7 +178,10 @@ class LoginQR extends Component {
                     console.log("result login => "+JSON.stringify(json))
                     let member =json[0];
                      if (json.length ===0){
-                        alert("verify your informations please !")
+                        console.log("verify your informations please !")
+
+                        self.props.navigation.navigate('InvalidAdress')
+
                      }
                     
                      else{
@@ -182,21 +193,22 @@ class LoginQR extends Component {
                       
                         if (member.role ==='ngo' ){
                             //navigate to ngo interface
-                           
-                            self.isNgo(member.publickey,privateKey)
+                           console.log("-------"+member.publickey)
+                            self.isNgo(member.publickey)
                         }
                         else if (member.role ==='vendeur'){
                            //navigate to vendeur interface
                            
-                           self.isVendor(member.publickey,privateKey)
+                           self.isVendor(member.publickey)
                        }
                        else if (member.role ==='vaccinTeam'){
                            //navigate to vaccinTeam interface
-                           
-                           self.isVaccinTeam(member.publickey,privateKey)
+                           console.log("-------"+member.publickey) 
+                           self.isVaccinTeam(member.publickey)
                        }
                        else{
-                           alert("verify your informations please !")
+                        console.log("verify your informations please !")
+                        self.props.navigation.navigate('InvalidAdress')
                        }
                      }
                     
@@ -207,12 +219,15 @@ class LoginQR extends Component {
 
             } else {
                 console.log('Network request for backoffice failed with response ' + response.status);
-                alert("verify your informations please !")
+                //alert("verify your informations please !")
+                self.props.navigation.navigate('InvalidAdress',response.status)
             }
         });
 
 
  }
+
+
 
 
 
@@ -234,7 +249,7 @@ class LoginQR extends Component {
                             marginLeft: "38%",
                             marginTop: '5%',
                         }}
-                            onPress={() => { this.props.navigation.navigate('Settings') }}
+                            onPress={() => { this.props.navigation.navigate('WelcomeToApp') }}
                         >
                             <ImageBackground
                                 //source={{ uri: this.state.companyLogo }}

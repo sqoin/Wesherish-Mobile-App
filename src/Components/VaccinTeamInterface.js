@@ -25,8 +25,6 @@ class VaccinTeamInterface extends Component {
 
     componentDidMount = () => {
         let self=this;
-       
-
         AsyncStorage.getItem("connectedMember",(err,dataUser)=>{
             if(err){
                 return;
@@ -56,14 +54,19 @@ class VaccinTeamInterface extends Component {
     }
 
     onSuccess = (e) => {
+
         this.setState({ simpleUserPrivateKey: ''+e.data });
        // console.log('sssssssssssssssssssss------'+e.data)
+
+      
        this.getUserPublickeyByPrivateKey(''+e.data)
     }
 
 
     //getBalance
   getBalance( publickey){
+
+    console.log("publickeeey "+ publickey)
      
     let data={
         "address":publickey,
@@ -82,7 +85,7 @@ class VaccinTeamInterface extends Component {
         .then(function (response) {
         if (response.ok) {
          response.text().then(function (balance) {
-            console.log(balance)
+            console.log("number of vaccin available "+ balance)
 
             let balanceValue = (balance * 1000000000000000000)
             
@@ -97,7 +100,7 @@ class VaccinTeamInterface extends Component {
             }
               
         }).catch(err => {
-            self.props.navigation.navigate('WelcomeVaccin')
+           // self.props.navigation.navigate('WelcomeVaccin')
             console.log(err) });
         
         } else {
@@ -112,6 +115,7 @@ class VaccinTeamInterface extends Component {
 
        getUserPublickeyByPrivateKey(privateKey){
 
+
         const self=this;
         fetch(urlBackEnd +'member/getUserByPrivateKey?privateKey=' + privateKey, {
             method: "GET"
@@ -121,9 +125,21 @@ class VaccinTeamInterface extends Component {
             .then(function (response) {
                 if (response.ok) {
                     response.json().then(function (data) {
+
+                        console.log("resssult "+ JSON.stringify(data))
                      
-                       self.setState({simpleUserPublickey:data.publickey}) 
-                       self.getBalance(data.publickey) ;            
+
+                        
+                                if (data[0].publickey === undefined){
+
+                                    alert("check your informations ! there is no user with this privatekey in our plateform")
+                                    self.props.navigation.navigate('WelcomeNgo')
+
+                                }else{
+                                    self.setState({simpleUserPublickey:data[0].publickey}) 
+                                    self.getBalance(data[0].publickey) ;  
+                                }
+                                
                       }).catch(err => {
                         self.props.navigation.navigate('WelcomeVaccin')  
                         console.log(err) });

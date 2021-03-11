@@ -161,22 +161,34 @@ class ValideMontant extends Component {
 
 
 
-    getUserPublickeyByPrivateKey(PrivateKey){
+    getUserPublickeyByPrivateKey(privatekey){
+
+        
+        console.log("useeer privateKey "+privatekey)
 
         const self=this;
 
         self.setState({ executed : true})
-        fetch(urlBackEnd +'member/getUserByPrivateKey?privateKey=' + PrivateKey, {
+        fetch(urlBackEnd +'member/getUserByPrivateKey?privateKey=' + privatekey, {
             method: "GET"
     
         })
     
             .then(function (response) {
                 if (response.ok) {
-                    response.json().then(function (json) {
+                    response.json().then(function (data) {
+
+                        if (data[0].publickey === undefined){
+
+                            alert("check your informations ! there is no user with this privatekey in our plateform")
+                            self.props.navigation.navigate('WelcomeNgo')
+
+                        }else{
+                            self.setState({simpleUserPublickey:data[0].publickey}) 
+                            self.getBalance(data[0].publickey) ;  
+                        }
                      
-                       self.setState({simpleUserPublickey:data.publickey})   
-                       self.getbalance(data.publickey);            
+                          
                       }).catch(err => {
                         self.setState({ executed : false})  
                         console.log(err) });
@@ -242,7 +254,7 @@ class ValideMontant extends Component {
 
 
 
-       getbalance(publickey){
+       getBalance(publickey){
 
 
 
@@ -323,25 +335,7 @@ class ValideMontant extends Component {
                         }}>
                        
                     </Text>
-                        <TouchableOpacity style={{
-                            marginRight: '0%',
-                            marginLeft: "22%",
-                            marginTop: '5%',
-                        }}
-                            onPress={() => { this.props.navigation.navigate('Menu') }}
-                        >
-                            <ImageBackground
-                                //source={{ uri: this.state.companyLogo }}
-                                source={require('../assetes/x.png')}
-                                style={{
-                                    width: 30, height: 30,
-                                    // borderWidth: 1,
-                                    //borderColor: 'black',
-
-                                    //9borderWidth: 1
-                                }}
-                            ></ImageBackground>
-                        </TouchableOpacity>
+                        
                     </View>
                 </View>
                 <View style={styles.body}>
