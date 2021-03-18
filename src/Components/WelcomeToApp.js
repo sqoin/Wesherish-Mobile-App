@@ -1,28 +1,10 @@
 import React, { Component } from 'react';
 import {
-    View, TextInput, Text,Platform,
-    TouchableOpacity, Button, StyleSheet, ImageBackground,AsyncStorage,Image
+    View, Text,
+    TouchableOpacity, StyleSheet,Image
 } from 'react-native';
 
-import {urlBlockchaine , urlBackEnd} from '../../utils'
 class WelcomeToApp extends Component {
-
-    constructor(props) {
-        super(props)
-        this.state = {
-
-        }
-    };
-
-    componentDidMount = () => {
-
-    }
-
-
-    componentWillUnmount() {
-
-    }
-
 
     render() {
     
@@ -49,13 +31,7 @@ class WelcomeToApp extends Component {
                     }}
                         
                     >
-                       {/* <Button
-
-                             color="#2b2343"
-                             style={{width: 70 }}
-                             title='Log out'
-                             onPress={() => { this.props.navigation.navigate('LoginQR') }}>
-                        </Button> */}
+                      
                     </TouchableOpacity>
                 </View>
             </View>

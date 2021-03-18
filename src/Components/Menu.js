@@ -77,6 +77,8 @@ class Menu extends Component {
             }
             });
     }
+
+    
     render() {
         return (
             <View style={styles.container}>

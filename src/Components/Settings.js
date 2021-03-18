@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {
     View, TextInput, Text,
-    TouchableOpacity, Button, StyleSheet, ImageBackground
+    TouchableOpacity, Button,AsyncStorage, StyleSheet, ImageBackground
 } from 'react-native';
 
 
@@ -22,7 +22,10 @@ class testPage extends Component {
     componentWillUnmount() {
 
     }
-
+    Logout(){
+        AsyncStorage.clear()
+        this.props.navigation.navigate('WelcomeToApp')
+       }
 
     render() {
         return (
@@ -164,7 +167,7 @@ class testPage extends Component {
                             A propos de
                     </Text>
                     </View>
-                    <TouchableOpacity onPress={() => { this.props.navigation.navigate('LoginQR') }}
+                    <TouchableOpacity onPress={() => { this.Logout() }}
                         style={{
                             marginTop: '1%', marginLeft: '0%', flexDirection: "row",
                             backgroundColor: "#2b2343", width: "100%", height: "15%",

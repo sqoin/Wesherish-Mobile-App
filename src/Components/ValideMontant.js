@@ -281,7 +281,7 @@ class ValideMontant extends Component {
                 let balanceValue = (balance * 1000000000000000000)
             
                 self.setState({ simpleUserBalance: balanceValue })
-    
+    console.log('heeeeeeeeere'+balanceValue)
                 if (balanceValue === 0){
     
                     alert("the citizen has no balance ! ")
