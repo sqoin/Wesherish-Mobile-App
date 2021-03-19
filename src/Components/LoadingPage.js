@@ -14,6 +14,7 @@ import {
     UIActivityIndicator,
     WaveIndicator,
   } from 'react-native-indicators';
+import { color } from 'react-native-reanimated';
   import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
  
 
@@ -32,13 +33,9 @@ class LoadingPage extends Component {
             role:undefined,
 
 
-      HeadTable: ['Head1', 'Head2', 'Head3', 'Head4', 'Head5'],
+      HeadTable: ['to', 'from', 'type', 'value', 'data'],
       DataTable: [
-        ['1', '2', '3', '4', '5'],
-        ['a', 'b', 'c', 'd', 'e'],
-        ['1', '2', '3', '4', '5'],
-        ['a', 'b', 'c', 'd', 'e'],
-        ['1', '2', '3', '4', '5']
+       
       ]
      
 
@@ -51,6 +48,7 @@ class LoadingPage extends Component {
 
         //callback
         this.getUserByPrivateKey(this.state.privateKey)
+        //this.transactiontable();
     }
 
 
@@ -107,6 +105,7 @@ class LoadingPage extends Component {
 
         const self=this;
         self.setState({publickey:publickey})
+        console.log('-------'+this.state.publickey)
         fetch(urlBlockchaine +'api/isVaccinTeamFunction', {
             method: "POST",
             headers: {
@@ -236,6 +235,16 @@ class LoadingPage extends Component {
  }
 
 
+
+  navigateToTransactionPage(){
+      let self=this;
+     let {publickey}=this.state
+    // self.setState({publickey:publickey})
+     this.props.navigation.navigate('TransactionPage',{publickey:publickey})
+    console.log('heerrrree'+publickey)
+
+ } 
+
  navigateToScanPage(){
 
     let {role}=this.state
@@ -251,6 +260,9 @@ class LoadingPage extends Component {
     AsyncStorage.clear()
     this.props.navigation.navigate('WelcomeToApp')
    }
+
+
+
 
     render() {
         return (
@@ -343,18 +355,18 @@ class LoadingPage extends Component {
                                     
                                     {this.state.publickey}
                                     </Text> 
-                                    <Table borderStyle={{borderWidth: 1, borderColor: '#ffa1d2'}}style={{marginTop: '10%',}}>
-                                    <Row data={this.state.HeadTable} style={styles.HeadStyle} textStyle={styles.TableText}/>
-                                    <Rows data={this.state.DataTable} textStyle={styles.TableText}/>
-                                    </Table>
+                                    <Text style={{  marginTop: '0%', marginLeft: '2%',
+                                    color: '#FFF', fontSize: 26, textAlign: 'center' } }>
                                     
+                                 {/*    { this.props.navigation.navigate('TransactionPage',{publickey: publickey})} */}
+                                    </Text> 
 
 
                                  <TouchableOpacity onPress={() => {this.navigateToScanPage()}} 
                               
                                     style={{
                                         marginTop: '30%', marginLeft: '0%', flexDirection: "row",
-                                        backgroundColor: "#2b2343", width: "100%", height: "15%",
+                                        backgroundColor: "#2b2343", width: "100%", height: "12%",
                                         borderRadius: 20
                                     }}>
 
@@ -366,9 +378,25 @@ class LoadingPage extends Component {
                                         Next 
                                 </Text>
                                 </TouchableOpacity> 
+                                <TouchableOpacity onPress={() => {this.navigateToTransactionPage()}} 
+                              
+                              style={{
+                                  marginTop: '5%', marginLeft: '0%', flexDirection: "row",
+                                  backgroundColor: "#2b2343", width: "100%", height: "12%",
+                                  borderRadius: 20
+                              }}>
+
+                          
+                              <Text style={{
+                                  marginTop: '5%', marginLeft: '37%',
+                                  color: '#FFF', fontSize: 16, textAlign: 'center'
+                              }}>
+                                  History transaction
+                          </Text>
+                          </TouchableOpacity> 
 
                             </View> }
-                
+                           
                    
      
                    </View> 

@@ -15,6 +15,7 @@ import  DouzeMots  from './src/Components/DouzeMots';
 import  LoadingPage  from './src/Components/LoadingPage';
 import  finalProcess  from './src/Components/finalProcess';
 import  WeCoin  from './src/Components/WeCoin';
+import  TransactionPage  from './src/Components/TransactionPage';
 
 class App extends Component {
   render() {
@@ -38,6 +39,7 @@ class App extends Component {
           <Stack.Screen name="DouzeMots" component={DouzeMots} />
           <Stack.Screen name="LoadingPage" component={LoadingPage} />
           <Stack.Screen name="finalProcess" component={finalProcess} />
+          <Stack.Screen name="TransactionPage" component={TransactionPage} />
           
         </Stack.Navigator>
       </NavigationContainer >
