@@ -15,9 +15,11 @@ import {
     WaveIndicator,
   } from 'react-native-indicators';
   import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
- 
+  import Error from '../SVG/error';
+  import Success from '../SVG/success';
 
   import {urlBlockchaine , urlBackEnd} from '../../utils'
+import Logout from '../SVG/logout';
 class LoadingPage extends Component {
 
     constructor(props) {
@@ -25,8 +27,7 @@ class LoadingPage extends Component {
         this.state = {
             privateKey:this.props.route.params.privateKey ? this.props.route.params.privateKey : "",
             publickey : undefined , 
-            error :  0 ,
-            successMessage: 0,
+            successMessage: undefined,
             result : undefined,
             errorMessage : undefined,
             role:undefined,
@@ -46,10 +47,7 @@ class LoadingPage extends Component {
     };
 
     componentDidMount = () => {
-
-
-
-        //callback
+    
         this.getUserByPrivateKey(this.state.privateKey)
     }
 
@@ -79,19 +77,21 @@ class LoadingPage extends Component {
                 console.log("la reponse => "+text)
                     if (text ==="true"){
 
-                        self.setState({result : 1 , successMessage:1 , role:"Ngo"})  
+                        self.setState({result : 1 , successMessage:"Your current Role is Ngo" , role:"Ngo"})  
                       
+                    }else if (JSON.parse(test).err !==undefined){
+                        self.setState({result : 1 , error:1 , errorMessage:"server Error, Please Try Again Later!"})  
                     }
                     else{
-                        self.setState({result : 1 , error:1 , errorMessage:"You don't have the right to access to this app!"})  
+                        self.setState({result : 1 , error:1 , errorMessage:"you are not authorised to access this application!"})  
                     }
                 }).catch(err => { console.log(err)
-                    self.setState({result : 1 , error:1 , errorMessage:"You don't have the right to access to this app!"})  
+                    self.setState({result : 1 , error:1 , errorMessage:"server Error, Please Try Again Later!"})  
                 });
 
             } else {
              
-                self.setState({result : 1 , error:1 , errorMessage:"You don't have the right to access to this app!"})  
+                self.setState({result : 1 , error:1 , errorMessage:"server Error, Please Try Again Later!"})  
 
             }
         });
@@ -121,21 +121,23 @@ class LoadingPage extends Component {
                 response.text().then(function (text) {
                     console.log("la reponse => "+text)
                    if (text ==="true"){
-                    self.setState({result : 1 , successMessage:1 , role:"VaccinTeam"}) 
-
+                    self.setState({result : 1 , successMessage:"Your current Role is VaccinTeam" , role:"VaccinTeam"}) 
+    
+                }else if (JSON.parse(test).err !==undefined){
+                    self.setState({result : 1 , error:1 , errorMessage:"server Error, Please Try Again Later!"})  
+                
                     }else{
                     
-                              self.setState({result : 1 , error:1 , errorMessage:"You don't have the right to access to this app!"})  
+                              self.setState({result : 1 ,  errorMessage:"you are not authorised to access this application!"})  
                         }
 
 
                 }).catch(err => { console.log(err)
-                    self.setState({result : 1 , error:1 , errorMessage:"You don't have the right to access to this app!"})  
+                    self.setState({result : 1 , errorMessage:"server Error, Please Try Again Later!"})  
                 });
 
             } else {
-                console.log('Network request for backoffice failed with response ' + response.status);
-                self.setState({result : 1 , error:1 , errorMessage:"You don't have the right to access to this app!"})  
+                self.setState({result : 1 ,  errorMessage:"server Error, Please Try Again Later!"})  
 
             }
         });
@@ -162,20 +164,23 @@ class LoadingPage extends Component {
             if (response.ok) {
                 response.text().then(function (text) {
                     if (text ==="true" ){
-                        self.setState({result : 1 , successMessage:1 , role:"Vendeur"}) 
+                        self.setState({result : 1 , successMessage:'Your current Role is Vendeur' , role:"Vendeur"}) 
+                        
+                    }else if (JSON.parse(test).err !==undefined){
+                        self.setState({result : 1 , error:1 , errorMessage:"server Error, Please Try Again Later!"})  
                     
                     }else{
 
-                        self.setState({result : 1 , error:1 , errorMessage:"You don't have the right to access to this app!"})  
+                        self.setState({result : 1 ,  errorMessage:"you are not authorised to access this application!"})  
                     }
 
 
                 }).catch(err => { console.log(err)
-                    self.setState({result : 1 , error:1 , errorMessage:"You don't have the right to access to this app!"})  
+                    self.setState({result : 1 ,  errorMessage:"server Error, Please Try Again Later!"})  
                 });
 
             } else {
-                self.setState({result : 1 , error:1 , errorMessage:"You don't have the right to access to this app!"})  
+                self.setState({result : 1 , errorMessage:"server Error, Please Try Again Later!"})  
 
             }
         });
@@ -195,19 +200,20 @@ class LoadingPage extends Component {
             if (response.ok) {
                 response.json().then(function (json) {
                     let member =json[0];
-                     if (json.length ===0){
 
-                        alert("herreeee ")
-                        self.setState({result : 1 , error:1 , errorMessage:"You are not a member on this community! verify your informations "})  
+                    console.log("aaaaa "+JSON.stringify(member))
+                     if (json.length ===0){
+              
+                        self.setState({result : 1 , errorMessage:"Invalid PrivateKey , please verify your informations!"})  
                      }
                     
                      else{
 
                         AsyncStorage.setItem("connectedMember",JSON.stringify(member))
 
-                        //AsyncStorage.getItem("connectedMember")
                         AsyncStorage.setItem("connectedPrivatekey",privateKey)
                      
+                        console.log("member.role"+member.role)
                      
                       
                         if (member.role ==='ngo' ){
@@ -220,15 +226,15 @@ class LoadingPage extends Component {
                            self.isVaccinTeam(member.publickey)
                        }
                        else{
-                        self.setState({result : 1 , error:1 , errorMessage:"You don't have the right to access to this app!"})  
+                        self.setState({result : 1 , errorMessage:"you are not authorised to access this application!"})  
                        }
                      }
                 }).catch(err => {
-                    self.setState({result : 1 , error:1 , errorMessage:'server error , Please Try Later!'})   
+                    self.setState({result : 1 ,  errorMessage:'server error , Please Try Later!'})   
                 });
 
             } else {
-                self.setState({result : 1 , error:1, errorMessage:'server error , Please Try Later!'})  
+                self.setState({result : 1 , errorMessage:'server error , Please Try Later!'})  
             }
         });
 
@@ -266,108 +272,62 @@ class LoadingPage extends Component {
                         }}>
                      
                     </Text>
-                        <TouchableOpacity style={{
-                            marginRight: '0%',
-                            marginLeft: "43%",
-                            marginTop: '5%',
-                            backgroundColor: "#2b2343",borderRadius: 5
-                        }}
-                            
-                        >
-                           <Button
+                       
+                          <TouchableOpacity
+                          style ={styles.logout}
+                                onPress={() => { this.Logout()  }}>
+                                 <Logout  onPress={() => { this.Logout()  }} />
 
-                                 color="#2b2343"
-                                 style={{width: 70 }}
-                                 title='Log out'
-                                 onPress={() => {this.Logout() }}>
-                            </Button>
-                        </TouchableOpacity>
+                            </TouchableOpacity>
+                    
                     </View>
                 </View>
                 <View style={styles.body}>
                
 
-                   {this.state.result === undefined &&  <UIActivityIndicator color='white' marginTop='25%' /> }
+                   {this.state.result === undefined &&  <UIActivityIndicator color='white' marginTop='15%' /> }
 
-                    {this.state.error ===  1 && this.state.successMessage ===0 &&
-
-                                <View style={{marginTop: '0%'}}> 
-                                <Text style={{  marginTop: '0%', marginLeft: '2%',
-                                color: '#FFF', fontSize: 26, textAlign: 'center' } }>
-                                {this.state.errorMessage}
-                                </Text> 
-                                <TouchableOpacity onPress={() => { this.props.navigation.navigate('LoginQR')}}
-                                    style={{
-                                        marginTop: '70%', marginLeft: '0%', flexDirection: "row",
-                                        backgroundColor: "#2b2343", width: "100%", height: "15%",
-                                        borderRadius: 20
-                                    }}>
-
-                                
-                                    <Text style={{
-                                        marginTop: '5%', marginLeft: '35%',
-                                        color: '#FFF', fontSize: 16, textAlign: 'center'
-                                    }}>
-                                        Scan Again 
-                                </Text>
-                                </TouchableOpacity> 
-
-                                </View> 
-                            
-                            }
-
-                            {this.state.successMessage ===  1 && this.state.error ===  0 &&
+                   
+                            {this.state.successMessage !==  undefined &&
 
                             <View >
 
 
-                                    <Text style={{  marginTop: '0%', marginLeft: '2%',
-                                    color: '#FFF', fontSize: 26, textAlign: 'center' } }>
-                                    
-                                        You are welcome 
-                                    </Text> 
-                                    <Text style={{  marginTop: '0%', marginLeft: '2%',
-                                    color: '#FFF', fontSize: 26, textAlign: 'center' } }>
-                                    
-                                    {this.state.role}
-                                    </Text>
-
-                                <Text style={{  marginTop: '0%', marginLeft: '2%',
-                                        color: '#FFF', fontSize: 26, textAlign: 'center' } }>
-                                            Your Public Key: 
+                                <Text style={{  marginTop: '5%', marginLeft: '2%',
+                                        color: '#FFF', fontSize: 20, textAlign: 'center' } }>
+                                            Your Public Key is:  
                                        
                                             
                                     </Text> 
-                                    <Text style={{  marginTop: '0%', marginLeft: '2%',
-                                    color: '#FFF', fontSize: 26, textAlign: 'center' } }>
+                                    <Text style={{  marginTop: '0%', marginLeft: '2%', 
+                                    color: '#FFF', fontSize: 15, textAlign: 'center', fontWeight: 'bold' } }>
                                     
                                     {this.state.publickey}
-                                    </Text> 
-                                    <Table borderStyle={{borderWidth: 1, borderColor: '#ffa1d2'}}style={{marginTop: '10%',}}>
+                                  </Text> 
+                                  
+                                <View  style={styles.box} >
+                                <View style={styles.svg}><Success/></View>
+                                <Text style={styles.successtext}>SUCCESS</Text>
+                                <Text style={styles.paragraph} > {this.state.successMessage} </Text>
+                            </View>
+
+                                {/*    <Table borderStyle={{borderWidth: 1, borderColor: '#ffa1d2'}}style={{marginTop: '10%',}}>
                                     <Row data={this.state.HeadTable} style={styles.HeadStyle} textStyle={styles.TableText}/>
                                     <Rows data={this.state.DataTable} textStyle={styles.TableText}/>
                                     </Table>
-                                    
-
-
-                                 <TouchableOpacity onPress={() => {this.navigateToScanPage()}} 
-                              
-                                    style={{
-                                        marginTop: '30%', marginLeft: '0%', flexDirection: "row",
-                                        backgroundColor: "#2b2343", width: "100%", height: "15%",
-                                        borderRadius: 20
-                                    }}>
-
+                                     */}
                                 
-                                    <Text style={{
-                                        marginTop: '5%', marginLeft: '45%',
-                                        color: '#FFF', fontSize: 16, textAlign: 'center'
-                                    }}>
-                                        Next 
-                                </Text>
-                                </TouchableOpacity> 
-
                             </View> }
+
+
+                            {this.state.errorMessage !== undefined   &&
+                                <View  style={styles.box} >
+
+                                <View style={styles.svg}><Error/></View>
+                            
+                                <Text style={styles.errortext}>ERROR</Text>
+                                <Text style={styles.paragraph} >  {this.state.errorMessage}</Text>
+                                </View>  }
                 
                    
      
@@ -376,6 +336,39 @@ class LoadingPage extends Component {
                     
 
                 <View style={styles.footer}>
+
+                    
+                {this.state.errorMessage !== undefined   &&  <TouchableOpacity onPress={() => { this.props.navigation.navigate('WelcomeToApp')}}
+                                    style={{
+                                        marginTop: '0%', marginLeft: '0%',
+                                        backgroundColor: "#2b2343", width: "50%", height: "40%",
+                                        borderRadius: 20, justifyContent:'center'
+                                    }}>
+
+                                
+                                    <Text style={{
+                                        marginTop: '0%', marginLeft: '0%',
+                                        color: '#FFF', fontSize: 16, textAlign: 'center'
+                                    }}>
+                                        Scan Again 
+                                </Text>
+                  </TouchableOpacity> }
+                  {this.state.successMessage !==  undefined &&     <TouchableOpacity onPress={() => {this.navigateToScanPage()}} 
+                              style={{
+                                marginTop: '0%', marginLeft: '0%',
+                                backgroundColor: "#2b2343", width: "50%", height: "40%",
+                                borderRadius: 20, justifyContent:'center'
+                            }}>
+
+                        
+                            <Text style={{
+                                marginTop: '0%', marginLeft: '0%',
+                                color: '#FFF', fontSize: 16, textAlign: 'center'
+                            }}>
+                                        Next 
+                                </Text>
+                    </TouchableOpacity> }
+
 
        
                     
@@ -405,8 +398,63 @@ const styles = StyleSheet.create({
     },
     footer: {
         flex: 1,
-        //backgroundColor: "red"
+        justifyContent:'center',
+        alignItems:'center',
+       // backgroundColor: "red"
     },
+    svg:{
+        marginBottom: '2%',
+        marginTop: '1%',
+        //backgroundColor:"green",
+        //height:"40%"
+       
+     
+    },
+
+    logout:{
+        marginRight: '0%',
+        marginLeft: "43%",
+        marginTop: '5%',
+    },
+    box: {
+        justifyContent:'center',
+        height: '60%',
+        width:"80%",
+        backgroundColor: 'white',
+        alignItems:'center',
+        marginTop:'10%',
+      marginLeft: '10%'
+
+
+    },
+    paragraph: {
+
+    textAlign: 'center',
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#241c33'
+   
+  },
+
+  successtext: {
+
+    textAlign: 'center',
+    marginBottom: '10%',
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'green'
+   
+  },
+
+  errortext: {
+ 
+    textAlign: 'center',
+    marginBottom: '10%',
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'red'
+   
+  }
 
 
 });

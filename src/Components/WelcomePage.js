@@ -3,6 +3,7 @@ import {
     View, Text,
     TouchableOpacity, Button, StyleSheet,AsyncStorage,Image
 } from 'react-native';
+import Logout from '../SVG/logout';
 
 class WelcomePage extends Component {
 
@@ -51,22 +52,12 @@ class WelcomePage extends Component {
                         }}>
                      
                     </Text>
-                        <TouchableOpacity style={{
-                            marginRight: '0%',
-                            marginLeft: "43%",
-                            marginTop: '5%',
-                            backgroundColor: "#2b2343",borderRadius: 5
-                        }}
-                            
-                        >
-                           <Button
+                    <TouchableOpacity
+                          style ={styles.logout}
+                                onPress={() => { this.Logout()  }}>
+                                 <Logout  onPress={() => { this.Logout()  }} />
 
-                                 color="#2b2343"
-                                 style={{width: 70 }}
-                                 title='Log out'
-                                 onPress={() => { this.Logout()}}>
-                            </Button>
-                        </TouchableOpacity>
+                            </TouchableOpacity>
                     </View>
                 </View>
                 <View style={styles.body}>
@@ -140,7 +131,11 @@ const styles = StyleSheet.create({
     footer: {
         flex: 1,
     },
-
+    logout:{
+        marginRight: '0%',
+        marginLeft: "43%",
+        marginTop: '5%',
+    },
 
 });
 
