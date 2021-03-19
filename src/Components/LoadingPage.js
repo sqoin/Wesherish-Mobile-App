@@ -239,7 +239,6 @@ class LoadingPage extends Component {
   navigateToTransactionPage(){
       let self=this;
      let {publickey}=this.state
-    // self.setState({publickey:publickey})
      this.props.navigation.navigate('TransactionPage',{publickey:publickey})
     console.log('heerrrree'+publickey)
 
