@@ -14,6 +14,7 @@ import {
     UIActivityIndicator,
     WaveIndicator,
   } from 'react-native-indicators';
+import { color } from 'react-native-reanimated';
   import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
   import Error from '../SVG/error';
   import Success from '../SVG/success';
@@ -33,13 +34,9 @@ class LoadingPage extends Component {
             role:undefined,
 
 
-      HeadTable: ['Head1', 'Head2', 'Head3', 'Head4', 'Head5'],
+      HeadTable: ['to', 'from', 'type', 'value', 'data'],
       DataTable: [
-        ['1', '2', '3', '4', '5'],
-        ['a', 'b', 'c', 'd', 'e'],
-        ['1', '2', '3', '4', '5'],
-        ['a', 'b', 'c', 'd', 'e'],
-        ['1', '2', '3', '4', '5']
+       
       ]
      
 
@@ -49,6 +46,7 @@ class LoadingPage extends Component {
     componentDidMount = () => {
     
         this.getUserByPrivateKey(this.state.privateKey)
+        //this.transactiontable();
     }
 
 
@@ -107,6 +105,7 @@ class LoadingPage extends Component {
 
         const self=this;
         self.setState({publickey:publickey})
+        console.log('-------'+this.state.publickey)
         fetch(urlBlockchaine +'api/isVaccinTeamFunction', {
             method: "POST",
             headers: {
@@ -242,6 +241,15 @@ class LoadingPage extends Component {
  }
 
 
+
+  navigateToTransactionPage(){
+      let self=this;
+     let {publickey}=this.state
+     this.props.navigation.navigate('TransactionPage',{publickey:publickey})
+    console.log('heerrrree'+publickey)
+
+ } 
+
  navigateToScanPage(){
 
     let {role}=this.state
@@ -257,6 +265,9 @@ class LoadingPage extends Component {
     AsyncStorage.clear()
     this.props.navigation.navigate('WelcomeToApp')
    }
+
+
+
 
     render() {
         return (

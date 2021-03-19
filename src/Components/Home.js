@@ -36,6 +36,7 @@ function Home(props) {
                 <Button style={styles.item} title="Loadingvaccin" onPress={() => props.navigation.navigate('Loadingvaccin')}></Button>  
                 <Button style={styles.item} title="ConfirmationNgo" onPress={() => props.navigation.navigate('ConfirmationNgo')}></Button>
                 <Button style={styles.item} title="InvalidAdress" onPress={() => props.navigation.navigate('InvalidAdress')}></Button>
+                <Button style={styles.item} title="TransactionPage" onPress={() => props.navigation.navigate('TransactionPage')}></Button>
             </View>
 
 
