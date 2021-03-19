@@ -77,7 +77,7 @@ class LoadingPage extends Component {
 
                         self.setState({result : 1 , successMessage:"Your current Role is Ngo" , role:"Ngo"})  
                       
-                    }else if (JSON.parse(test).err !==undefined){
+                    }else if (JSON.parse(text).err !==undefined){
                         self.setState({result : 1 , error:1 , errorMessage:"server Error, Please Try Again Later!"})  
                     }
                     else{
@@ -122,7 +122,7 @@ class LoadingPage extends Component {
                    if (text ==="true"){
                     self.setState({result : 1 , successMessage:"Your current Role is VaccinTeam" , role:"VaccinTeam"}) 
     
-                }else if (JSON.parse(test).err !==undefined){
+                }else if (JSON.parse(text).err !==undefined){
                     self.setState({result : 1 , error:1 , errorMessage:"server Error, Please Try Again Later!"})  
                 
                     }else{
@@ -165,7 +165,7 @@ class LoadingPage extends Component {
                     if (text ==="true" ){
                         self.setState({result : 1 , successMessage:'Your current Role is Vendeur' , role:"Vendeur"}) 
                         
-                    }else if (JSON.parse(test).err !==undefined){
+                    }else if (JSON.parse(text).err !==undefined){
                         self.setState({result : 1 , error:1 , errorMessage:"server Error, Please Try Again Later!"})  
                     
                     }else{
@@ -320,6 +320,8 @@ class LoadingPage extends Component {
                                 <View style={styles.svg}><Success/></View>
                                 <Text style={styles.successtext}>SUCCESS</Text>
                                 <Text style={styles.paragraph} > {this.state.successMessage} </Text>
+                                <Text style={styles.link}  onPress={() => { this.props.navigation.navigate('TransactionPage' , {publickey:this.state.publickey})  }} > View your Transactions </Text>
+
                             </View>
 
                                 {/*    <Table borderStyle={{borderWidth: 1, borderColor: '#ffa1d2'}}style={{marginTop: '10%',}}>
@@ -406,6 +408,14 @@ const styles = StyleSheet.create({
         flex: 4,
         //backgroundColor: "#fff"
 
+    },
+
+    link:{
+        textAlign: 'center',
+        fontSize: 12,
+        fontWeight: 'bold',
+        color: '#A52A2A' ,
+        textDecorationLine: 'underline',  
     },
     footer: {
         flex: 1,
