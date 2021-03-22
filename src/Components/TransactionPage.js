@@ -3,6 +3,8 @@ import {
     View, TextInput, Text, ScrollView,
     TouchableOpacity, Button, StyleSheet, ImageBackground, AsyncStorage, Image
 } from 'react-native';
+import { UIActivityIndicator } from 'react-native-indicators';
+import { DataTable } from 'react-native-paper';
 
 import { color } from 'react-native-reanimated';
 import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
@@ -14,40 +16,33 @@ class TransactionPage extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            publickey: this.props.route.params.publickey ? this.props.route.params.publickey : "",
+            // publickey: this.props.route.params.publickey ? this.props.route.params.publickey : "",
             //publickey : undefined , 
             error: 0,
             successMessage: 0,
             result: undefined,
             errorMessage: undefined,
             role: undefined,
-
+            dataUser: [],
+            busy: true,
 
             HeadTable: ['To', 'From', 'Type', 'Value', 'Date'],
-            DataTable: [
-
-            ]
 
 
         }
+
+
+
     };
+
+    transactions = []
+
 
     componentDidMount = () => {
 
-        /*     AsyncStorage.getItem("connectedMember",(err,data)=>{
-                if(err){
-                    return;
-                }
-            
-                this.setState({roleConnectedUser:JSON.parse(data).role})
-                console.log("role user => "+JSON.parse(data).role)  
-            })
-     */
 
 
-        console.log('heereee' + this.state.publickey)
-        this.transactiontabledonation(this.state.publickey);
-        this.transactiontablevaccin(this.state.publickey);
+        this.getAllUsersAndPublicKeys();
 
     }
 
@@ -73,18 +68,52 @@ class TransactionPage extends Component {
             '-' + ('0' + u.getUTCMonth()).slice(-2) +
             '-' + ('0' + u.getUTCDate()).slice(-2) +
             ' ' + ('0' + u.getUTCHours()).slice(-2) +
-            ':' + ('0' + u.getUTCMinutes()).slice(-2) +
-            ':' + ('0' + u.getUTCSeconds()).slice(-2) +
-            '.' + (u.getUTCMilliseconds() / 1000).toFixed(2).slice(2, 5)
+            ':' + ('0' + u.getUTCMinutes()).slice(-2) 
+           
     };
 
 
-    transactiontablevaccin(from) {
+    getAllUsersAndPublicKeys() {
+        const self = this;
+        fetch(urlBackEnd + 'member/getAllUsersAndPublicKeys', {
+            method: "GET"
+        })
+            .then(function (response) {
+                if (response.ok) {
+                    response.json().then(function (usersList) {
+                        self.transactiontabledonation(self.state.publickey, usersList);
+                        self.transactiontablevaccin(self.state.publickey, usersList);
+                    }).catch(err => {
 
-        //form
+                    });
+
+                } else {
+
+                }
+            });
+
+
+    }
+    /*   filtrename(){
+ 
+ 
+     dataUser.map(element=>{
+             let userfrom= DataTable.filtre(user=>{
+                 return(user.publickey&&user.publickey.includes(element.from))})
+             
+             let userto= DataTable.filtre(user=>{
+                 return(user.publickey&&user.publickey.includes(element.to))})
+                 element.userfrom=userform.length==0 ?  element.from :userfrom[0].firstname+' '+userfrom[0].lastname
+                 element.userto=userto.length==0 ?  element.from :userto[0].firstname+' '+userto[0].lastname
+                 this.transactions.push(element)
+             }) 
+ 
+       
+      }
+  */
+    transactiontablevaccin(from, usersList) {
+
         var ret = [];
-
-
         let self = this;
         fetch('https://graph.sqoin.us/subgraphs/name/Wesharish/Wesharishtokenvaccine', {
             method: "POST",
@@ -92,27 +121,28 @@ class TransactionPage extends Component {
                 "Content-Type": "application/json",
                 "Accept": "application/json"
             },
-            body: JSON.stringify({ "query": "{transactions(where:{from:" + '\"' + from + '\"' + "}){id from to value type status timestamp}}" })
+            body: JSON.stringify({ "query": "{transactions(where:{from:\"0x22d505dcc5a360e6679210415b81fb891c28fba8\"}){id from to value type status timestamp}}" })
             //transactions(where:{from:"+'\"'+from+'\"'+"})
 
         })
 
             .then(function (response) {
-                // console.log("response => "+JSON.stringify(response))
                 if (response.ok) {
                     response.json().then(function (data) {
-                        if (data) {
-                            if (Array.isArray(data.data.transactions) && data.data.transactions.length > 0)
-                        data.data.transactions.map(element => {
-                            ret.push([element.from, element.to, element.type, element.value, self.getTime(element.timestamp)])
-                        })
-                        else {
-                            self.setState({ result: 1, error: 1, errorMessage: "There is no transactions yet!Tapez un message" })
+                        data.data.transactions.map(tr => {
+                            usersList.map(user => {
+                                tr.from = (user.publickey ? user.publickey.toLowerCase() : "") == tr.from.toLowerCase() ? user.firstname + " " + user.lastname : tr.from
+                                tr.to = (user.publickey ? user.publickey.toLowerCase() : "") == tr.to.toLowerCase() ? user.firstname + " " + user.lastname : tr.to
+                            })
+                            var list = [tr.to, tr.from, tr.type, tr.value, self.getTime(tr.timestamp)]
+                            self.transactions.push(list)
+                            self.setState({ busy: false })
 
-                        }}
+
+                        })
+
 
                     }).catch(err => {
-
                         self.setState({ message: 'Non!' })
                     });
                 } else {
@@ -123,12 +153,12 @@ class TransactionPage extends Component {
     }
 
 
-    transactiontabledonation(from) {
 
-        //form
+
+
+    transactiontabledonation(from, usersList) {
+
         var ret = [];
-
-
         let self = this;
         fetch('https://graph.sqoin.us/subgraphs/name/Wesharish/Wesharishtokendonation', {
             method: "POST",
@@ -136,7 +166,7 @@ class TransactionPage extends Component {
                 "Content-Type": "application/json",
                 "Accept": "application/json"
             },
-            body: JSON.stringify({ "query": "{transactions(where:{from:" + '\"' + from + '\"' + "}){id from to value type status timestamp}}" })
+            body: JSON.stringify({ "query": "{transactions(where:{from:\"0x22d505dcc5a360e6679210415b81fb891c28fba8\"}){id from to value type status timestamp}}" })
             //transactions(where:{from:"+'\"'+from+'\"'+"})
 
         })
@@ -145,20 +175,21 @@ class TransactionPage extends Component {
                 if (response.ok) {
                     response.json().then(function (data) {
                         if (data) {
-                            if (Array.isArray(data.data.transactions) && data.data.transactions.length > 0)
-                                data.data.transactions.map(element => {
-                                    ret.push([element.from, element.to, element.type, element.value, self.getTime(element.timestamp)])
+                            data.data.transactions.map(tr => {
+                                usersList.map(user => {
+                                    tr.from = (user.publickey ? user.publickey.toLowerCase() : "") == tr.from.toLowerCase() ? user.firstname + " " + user.lastname : tr.from
+                                    tr.to = (user.publickey ? user.publickey.toLowerCase() : "") == tr.to.toLowerCase() ? user.firstname + " " + user.lastname : tr.to
                                 })
-                            else {
-                                self.setState({ result: 1, error: 1, errorMessage: "There is no transactions yet!Tapez un message" })
+                                var list = [tr.to, tr.from, tr.type, tr.value, self.getTime(tr.timestamp)]
+                                self.setState({ busy: false })
+                                self.transactions.push(list)
+                            })
 
-                            }
+
+
                         }
 
-                        self.setState({ DataTable: ret }, () => {
-                            console.log(JSON.stringify(self.state.DataTable))
 
-                        })
 
                     }).catch(err => {
 
@@ -235,21 +266,44 @@ class TransactionPage extends Component {
                 <View style={styles.body}>
 
 
-                    { this.state.error === 0 &&
-                    <view>
-                     <Text style={{
-                        marginTop: '0%', marginLeft: '2%',
-                        color: '#FFF', fontSize: 26, textAlign: 'center'
-                    }}>
 
-                        You are welcome
-                            </Text>
-                        <Table borderStyle={{ borderWidth: 0 }} style={{ marginTop: '10%', }}>
+
+
+                    <View >
+
+                        {this.state.error === 1 &&
+                            <Text style={{
+                                marginTop: '0%', marginLeft: '2%',
+                                color: '#FFF', fontSize: 26, textAlign: 'center'
+                            }}>
+
+                                {this.state.errorMessage}
+                            </Text>}
+
+                        {this.state.error === 0 &&
+                            <Text style={{
+                                marginTop: '0%', marginLeft: '2%',
+                                color: '#FFF', fontSize: 26, textAlign: 'center'
+                            }}>
+
+                                You are welcome
+                                    </Text>}
+
+                    </View>
+
+
+                    {this.state.busy ?
+                        (<UIActivityIndicator color='white' marginTop='25%' />)
+                        :
+                        (<Table borderStyle={{ borderWidth: 0 }} style={{ marginTop: '10%', }}>
                             <Row data={this.state.HeadTable} style={styles.HeadStyle} style={{ backgroundColor: '#FEF5E7' }} textStyle={{ color: '#17202A', textAlign: 'center' }} />
                             <ScrollView style={{ height: 500 }} vertical={true}>
-                                <Rows data={this.state.DataTable} style={{ backgroundColor: '#2b2343' }} textStyle={{ color: '#FFF', textAlign: 'center' }} />
+                                <Rows data={this.transactions} style={{ backgroundColor: '#2b2343' }} textStyle={{ color: '#FFF', textAlign: 'center' }} />
                             </ScrollView>
-                        </Table></view>}
+                        </Table>)
+
+                    }
+
 
 
                 </View>
