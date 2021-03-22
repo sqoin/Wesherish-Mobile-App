@@ -16,7 +16,7 @@ class TransactionPage extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            // publickey: this.props.route.params.publickey ? this.props.route.params.publickey : "",
+             publickey: this.props.route.params.publickey ? this.props.route.params.publickey : "",
             //publickey : undefined , 
             error: 0,
             successMessage: 0,
@@ -94,23 +94,7 @@ class TransactionPage extends Component {
 
 
     }
-    /*   filtrename(){
- 
- 
-     dataUser.map(element=>{
-             let userfrom= DataTable.filtre(user=>{
-                 return(user.publickey&&user.publickey.includes(element.from))})
-             
-             let userto= DataTable.filtre(user=>{
-                 return(user.publickey&&user.publickey.includes(element.to))})
-                 element.userfrom=userform.length==0 ?  element.from :userfrom[0].firstname+' '+userfrom[0].lastname
-                 element.userto=userto.length==0 ?  element.from :userto[0].firstname+' '+userto[0].lastname
-                 this.transactions.push(element)
-             }) 
- 
-       
-      }
-  */
+    
     transactiontablevaccin(from, usersList) {
 
         var ret = [];
@@ -121,7 +105,7 @@ class TransactionPage extends Component {
                 "Content-Type": "application/json",
                 "Accept": "application/json"
             },
-            body: JSON.stringify({ "query": "{transactions(where:{from:\"0x22d505dcc5a360e6679210415b81fb891c28fba8\"}){id from to value type status timestamp}}" })
+            body: JSON.stringify({ "query": "{transactions(where:{from:"+'\"'+from+'\"'+"}){id from to value type status timestamp}}" })
             //transactions(where:{from:"+'\"'+from+'\"'+"})
 
         })
@@ -166,7 +150,7 @@ class TransactionPage extends Component {
                 "Content-Type": "application/json",
                 "Accept": "application/json"
             },
-            body: JSON.stringify({ "query": "{transactions(where:{from:\"0x22d505dcc5a360e6679210415b81fb891c28fba8\"}){id from to value type status timestamp}}" })
+            body: JSON.stringify({ "query": "{transactions(where:{from:"+'\"'+from+'\"'+"}){id from to value type status timestamp}}" })
             //transactions(where:{from:"+'\"'+from+'\"'+"})
 
         })
