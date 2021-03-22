@@ -64,9 +64,9 @@ class TransactionPage extends Component {
 
         var u = new Date(unixtime * 1000);
 
-        return u.getUTCFullYear() +
+        return  ('0' + u.getUTCDate()).slice(-2) +
             '-' + ('0' + u.getUTCMonth()).slice(-2) +
-            '-' + ('0' + u.getUTCDate()).slice(-2) +
+            '-'+u.getUTCFullYear() +
             ' ' + ('0' + u.getUTCHours()).slice(-2) +
             ':' + ('0' + u.getUTCMinutes()).slice(-2) 
            
@@ -120,6 +120,8 @@ class TransactionPage extends Component {
                             })
                             var list = [tr.to, tr.from, tr.type, tr.value, self.getTime(tr.timestamp)]
                             self.transactions.push(list)
+                            var list1 = ['','', '', '', '']
+                                self.transactions.push(list1)
                             self.setState({ busy: false })
 
 
@@ -165,8 +167,10 @@ class TransactionPage extends Component {
                                     tr.to = (user.publickey ? user.publickey.toLowerCase() : "") == tr.to.toLowerCase() ? user.firstname + " " + user.lastname : tr.to
                                 })
                                 var list = [tr.to, tr.from, tr.type, tr.value, self.getTime(tr.timestamp)]
-                                self.setState({ busy: false })
+                                var list1 = ['','', '', '', '']
+                                self.transactions.push(list1)
                                 self.transactions.push(list)
+                                self.setState({ busy: false })
                             })
 
 
@@ -266,11 +270,11 @@ class TransactionPage extends Component {
 
                         {this.state.error === 0 &&
                             <Text style={{
-                                marginTop: '0%', marginLeft: '2%',
+                                marginTop: '-10%', marginLeft: '2%',
                                 color: '#FFF', fontSize: 26, textAlign: 'center'
                             }}>
 
-                                You are welcome
+                                Transactions List
                                     </Text>}
 
                     </View>
