@@ -38,7 +38,8 @@ class finalProcess extends Component {
                 successMessage:undefined,
                 result : undefined,
                 errorMessage : undefined,
-                test:'ameni'
+                test:'ameni',
+                txid : ''
 
         }
 
@@ -61,8 +62,9 @@ class finalProcess extends Component {
         //bind "this" for donation functionality
         this.getBalanceDonation = this.getBalanceDonation.bind(this);
         this.approveDonation = this.approveDonation.bind(this);
-        this.ConfirmburnDonationToken=this.ConfirmburnDonationToken.bind(this);
         this.burnDonationToken=this.burnDonationToken.bind(this);
+        this.ConfirmburnDonationToken=this.ConfirmburnDonationToken.bind(this);
+
         
     };
 
@@ -194,7 +196,7 @@ class finalProcess extends Component {
             }else{
            
                 //approve donation
-               callback(self.burnDonationToken()) 
+               callback(self.burnDonationToken) 
 
             }
               
@@ -289,9 +291,7 @@ class finalProcess extends Component {
                response.json().then(function (data) {
               console.log(JSON.stringify(data))
                 if (data.tx !==undefined){
-                   
-                 
-
+                
                     //burnDonationToken
                     callback();
                    
@@ -370,7 +370,7 @@ class finalProcess extends Component {
 
     let self =this;
     Alert.alert('Burn Donation ' , 'Are you sure about burning this token ?', [
-        {text:'NO' , onPress: ()=> alert("You didn't complete the burn process ! if you want to try again scan the code once again! ") , style:'cancel'},
+       {text:'NO' , onPress: ()=> this.cancelBurn()},
         {text:'YES' , onPress: ()=> self.ConfirmburnDonationToken() }
     ])
 
@@ -379,8 +379,8 @@ class finalProcess extends Component {
     ConfirmburnDonationToken(){
 
         let {connectedUserPublickey , connectedUserPrivateKey , userScanedPublickey , userScanedBalance}=this.state;
-        console.log(self.connectedUserPrivateKey+' '+self.connectedUserPublickey+' '+self.userScanedPrivateKey+' '+self.userScanedBalance)
-               
+           
+        console.log("vendeur Balance => "+userScanedBalance)
         let data={
             "address":userScanedPublickey,//connectedUserPublickey
             "contenu":userScanedBalance,
@@ -403,9 +403,8 @@ class finalProcess extends Component {
 
                 console.log("transaction id => "+JSON.stringify(data))
     
-                if (data.err !==undefined){
-                  
-                    self.setState({result : 1 , successMessage:data.txid})
+                if (data.tx !== undefined){
+                    self.setState({result : 1 , successMessage:'Transaction was successfully completed ' , txid : data.tx})
                 }
                 else {
         
@@ -427,22 +426,26 @@ class finalProcess extends Component {
     
     } 
 
-   
+   cancelBurn(){
+
+    this.setState({result : 1 , errorMessage:"You didn't complete the burn process ! if you want to try again you should rescan the qrcode!"})
+
+   }
       
         
     
-       burnVaccinToken(){
-    let self=this;
-    console.log("------------------"+this.connectedUserPublickey+' '+this.userScanedPublickey+' '+this.connectedUserPrivateKey)
+    burnVaccinToken(){
+
+      
         Alert.alert('Burn Vaccin ' , 'Are you sure about burning this token ?', [
-            {text:'NO' , onPress: ()=> alert("You didn't complete the burn process ! if you want to try again scan the code once again! ") , style:'cancel'},
-            {text:'YES' , onPress: ()=> self.ConfirmburnVaccinToken() }
+            {text:'NO' , onPress: ()=> this.cancelBurn()},
+            {text:'YES' , onPress: ()=> this.ConfirmburnVaccinToken() }
         ])
     
        }
         ConfirmburnVaccinToken(){
             let {connectedUserPublickey , connectedUserPrivateKey , userScanedPublickey }=this.state;
-            console.log(this.connectedUserPublickey+' '+this.userScanedPublickey+' '+this.connectedUserPrivateKey)
+            console.log(connectedUserPublickey+' '+userScanedPublickey+' '+connectedUserPrivateKey)
             let data={
                 "address":userScanedPublickey,//connectedUserPublickey
                 "from":connectedUserPublickey,//userScanedPublickey
@@ -464,12 +467,11 @@ class finalProcess extends Component {
                         if (response.ok) {
                             response.json().then(function (data) {
                                console.log("---"+JSON.stringify(data))
-                               if (data.err !==undefined){
-                  
-                                self.setState({result : 1 , successMessage:'Transaction was successfully completed '})
+                               if (data.tx !== undefined){
+                                self.setState({result : 1 , successMessage:'Transaction was successfully completed ' , txid : data.tx})
                             }
                             else {
-                    
+        
                                 self.setState({result : 1 ,  errorMessage:"Transaction Failed , please Try again!"})
                      
                             }
@@ -544,7 +546,12 @@ class finalProcess extends Component {
                  <View  style={styles.box} >
                     <View style={styles.svg}><Success/></View>
                     <Text style={styles.successtext}>SUCCESS</Text>
-                    <Text style={styles.paragraph} > Tx Id :  {this.state.successMessage}</Text>
+                    <Text style={styles.paragraphSucess} >{this.state.successMessage}</Text>
+                    <Text style={styles.txidText} > Transaction Id : </Text> 
+                    <Text style={{   textAlign: 'center',
+                        fontSize: 12,
+                        color: 'black'}} >    {this.state.txid}</Text> 
+                 
                 </View>
 
               
@@ -581,7 +588,7 @@ class finalProcess extends Component {
           {this.state.result !== undefined  &&
                 <View style={styles.footer}>
 
-                <TouchableOpacity onPress={() => { this.props.navigation.navigate('WelcomeToApp') }}
+                <TouchableOpacity onPress={() => { this.props.navigation.navigate('WelcomePage') }}
                     style={{
                          marginLeft: '5%', 
                         backgroundColor: "#2b2343", width: "40%", height: "30%",
@@ -597,7 +604,7 @@ class finalProcess extends Component {
                 </Text>
                 </TouchableOpacity>
                 
-                <TouchableOpacity onPress={() => { this.props.navigation.navigate('scanQr') }}
+                <TouchableOpacity onPress={() => { this.props.navigation.navigate('WelcomeToApp') }}
                     style={{
                        marginLeft: '5%',
                         backgroundColor: "#2b2343", width: "40%", height: "30%",
@@ -658,7 +665,7 @@ const styles = StyleSheet.create({
     },
     box: {
         justifyContent:'center',
-        height: '60%',
+        height: '70%',
         width:"80%",
         backgroundColor: 'white',
         alignItems:'center',
@@ -676,10 +683,29 @@ const styles = StyleSheet.create({
    
   },
 
+  paragraphSucess: {
+
+    textAlign: 'center',
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#241c33',
+    marginBottom:'5%'
+   
+  },
+
+  txidText:{
+
+    textAlign: 'center',
+    marginBottom: '5%',
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#90EE90'
+  },
+
   successtext: {
 
     textAlign: 'center',
-    marginBottom: '10%',
+    marginBottom: '5%',
     fontSize: 20,
     fontWeight: 'bold',
     color: 'green'

@@ -66,7 +66,8 @@ class LoadingPage extends Component {
             "Content-Type": "application/json",
             "Accept": "application/json"
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(data),
+            timeout: 9000
     
         })
         .then(function (response) {
@@ -92,7 +93,10 @@ class LoadingPage extends Component {
                 self.setState({result : 1 , error:1 , errorMessage:"server Error, Please Try Again Later!"})  
 
             }
+        }).catch(err => { console.log(err)
+            self.setState({result : 1 , errorMessage:"server Timeout Error, Please Try Again Later!"})  
         });
+
 
     }
 
@@ -112,7 +116,8 @@ class LoadingPage extends Component {
             "Content-Type": "application/json",
             "Accept": "application/json"
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(data),
+            timeout: 9000
     
         })
         .then(function (response) {
@@ -136,9 +141,12 @@ class LoadingPage extends Component {
                 });
 
             } else {
+                console.log("timeout prblm ")
                 self.setState({result : 1 ,  errorMessage:"server Error, Please Try Again Later!"})  
 
             }
+        }).catch(err => { console.log(err)
+            self.setState({result : 1 , errorMessage:"server Timeout Error, Please Try Again Later!"})  
         });
 
     }
@@ -157,7 +165,8 @@ class LoadingPage extends Component {
             "Content-Type": "application/json",
             "Accept": "application/json"
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(data),
+            timeout: 9000
         })
         .then(function (response) {
             if (response.ok) {
@@ -182,7 +191,10 @@ class LoadingPage extends Component {
                 self.setState({result : 1 , errorMessage:"server Error, Please Try Again Later!"})  
 
             }
+      }).catch(err => { console.log(err)
+            self.setState({result : 1 , errorMessage:"server Timeout Error, Please Try Again Later!"})  
         });
+
 
     }
 
@@ -235,7 +247,10 @@ class LoadingPage extends Component {
             } else {
                 self.setState({result : 1 , errorMessage:'server error , Please Try Later!'})  
             }
+     }).catch(err => { console.log(err)
+            self.setState({result : 1 , errorMessage:"server Error, Please Try Again Later!"})  
         });
+
 
 
  }
@@ -324,11 +339,7 @@ class LoadingPage extends Component {
 
                             </View>
 
-                                {/*    <Table borderStyle={{borderWidth: 1, borderColor: '#ffa1d2'}}style={{marginTop: '10%',}}>
-                                    <Row data={this.state.HeadTable} style={styles.HeadStyle} textStyle={styles.TableText}/>
-                                    <Rows data={this.state.DataTable} textStyle={styles.TableText}/>
-                                    </Table>
-                                     */}
+                          
                                 
                             </View> }
 
@@ -363,7 +374,7 @@ class LoadingPage extends Component {
                                         marginTop: '0%', marginLeft: '0%',
                                         color: '#FFF', fontSize: 16, textAlign: 'center'
                                     }}>
-                                        Scan Again 
+                                        Scan QrCode 
                                 </Text>
                   </TouchableOpacity> }
                   {this.state.successMessage !==  undefined &&     <TouchableOpacity onPress={() => {this.navigateToScanPage()}} 

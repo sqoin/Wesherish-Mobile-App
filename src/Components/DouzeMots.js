@@ -10,14 +10,22 @@ class DouzeMots extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            mots1:''
+            mots1:'',
+            mots2:'',
+            mots3:'',
+            mots4:'',
+            mots5:'',
+            mots6:'',
+            mots7:'',
+            mots8:'',
+            mots9:'',
+            mots10:'',
+            mots11:'',
+            mots12:''
 
         }
     };
 
-    componentDidMount = () => {
-      
-    }
 
 
     componentWillUnmount() {
@@ -27,10 +35,7 @@ class DouzeMots extends Component {
     validate(){
 
             let self=this;
-        console.log('the word is '+ self.state.mots1 +' '+ self.state.mots2 +' '+ self.state.mots3 +' '+ self.state.mots4 
-       +' '+ self.state.mots5 +' '+self.state.mots6 +' '+ self.state.mots7 +' '+ self.state.mots8 +' '+ self.state.mots9
-        +' '+ self.state.mots10 +' '+self.state.mots11 +' '+ self.state.mots12 );
-
+       
 
         let words = self.state.mots1 +' '+ self.state.mots2 +' '+ self.state.mots3 +' '+ self.state.mots4 
         +' '+ self.state.mots5 +' '+self.state.mots6 +' '+ self.state.mots7 +' '+ self.state.mots8 +' '+ self.state.mots9
@@ -53,7 +58,9 @@ class DouzeMots extends Component {
             if (response.ok) {
             response.json().then(function (data) {
                 console.log("++++++++++++++++++2 "+JSON.stringify(data))
-                self.getUserByPrivateKey(data.privatekey)
+               // self.getUserByPrivateKey(data.privatekey)
+
+                self.props.navigation.navigate('LoadingPage',{privateKey: data.privatekey})
                 
             
             }).catch(err => { 
@@ -68,184 +75,7 @@ class DouzeMots extends Component {
             });
     }
 
-
-    getUserByPrivateKey(privateKey){
-
-        const self=this;
-        fetch(urlBackEnd +'member/getUserByPrivateKey?privateKey=' + privateKey, {
-            method: "GET"
-    
-        })
-    
-            .then(function (response) {
-                if (response.ok) {
-                    response.json().then(function (json) {
-                        console.log("result login => "+JSON.stringify(json))
-                        let member =json[0];
-                         if (json.length ===0){
-                            alert("verify your informations please !")
-                         }
-                        
-                         else{
-    
-                            AsyncStorage.setItem("connectedMember",JSON.stringify(member))
-                            AsyncStorage.setItem("connectedPrivatekey",privateKey)
-                         
-       
-                          
-                            if (member.role ==='ngo' ){
-                                //navigate to ngo interface
-                               
-                                self.isNgo(member.publickey)
-                            }
-                            else if (member.role ==='vendeur'){
-                               //navigate to vendeur interface
-                               
-                               self.isVendor(member.publickey)
-                           }
-                           else if (member.role ==='vaccinTeam'){
-                               //navigate to vaccinTeam interface
-                               
-                               self.isVaccinTeam(member.publickey)
-                           }
-                           else{
-                               alert("verify your informations please !")
-                           }
-                         }
-                        
-                       
-                    
-    
-                    }).catch(err => { console.log(err) });
-    
-                } else {
-                    console.log('Network request for backoffice failed with response ' + response.status);
-                    alert("verify your informations please !")
-                }
-            });
-    
-    
-     }
-    
-   
-    
-     isNgo (publickey){
-        let data={
-            "address":publickey
-         
-        }
-        const self=this;
-        fetch(urlBlockchaine +'api/isNgoFunction' , {
-            method: "POST",
-            headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-            },
-            body: JSON.stringify(data)
-    
-        })
-        .then(function (response) {
-            if (response.ok) {
-                response.text().then(function (text) {
-                   // console.log("la reponse => "+text)
-                    if (text ===true ){
-                        self.props.navigation.navigate('WelcomeNgo')
-                    }
-                    else{
-                        alert("Invalid Address , verify your informations!")
-                    }
-
-
-                }).catch(err => { console.log(err) });
-
-            } else {
-                console.log('Network request for backoffice failed with response ' + response.status);
-
-
-            }
-        });
-
-    }
-
-
-    isVaccinTeam (publickey, privateKey){
-        let data={
-            "address":publickey,
-         }
-
-
-        const self=this;
-        fetch(urlBlockchaine +'api/isVaccinTeamFunction', {
-            method: "POST",
-            headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-            },
-            body: JSON.stringify(data)
-    
-        })
-        .then(function (response) {
-            if (response.ok) {
-                response.text().then(function (text) {
-                   /// console.log("la reponse => "+text)
-                    if (text ===true ){
-
-                        self.props.navigation.navigate('WelcomeVaccin')
-                    }else{
-                            alert("verify your informations")
-                        }
-
-
-                }).catch(err => { console.log(err) });
-
-            } else {
-                console.log('Network request for backoffice failed with response ' + response.status);
-
-
-            }
-        });
-
-    }
-
-    isVendor (publickey  ){
-        let data={
-
-            "address":publickey,
-          
-        }
-        const self=this;
-        fetch(urlBlockchaine +'api/isVendorFunction', {
-            method: "POST",
-            headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-            },
-            body: JSON.stringify(data)
-        })
-        .then(function (response) {
-            if (response.ok) {
-                response.text().then(function (text) {
-
-                   // console.log("la reponse => "+text)
-                    if (text ===true ){
-
-                        self.props.navigation.navigate('Menu')
-                    }
-
-
-                }).catch(err => { console.log(err) });
-
-            } else {
-                console.log('Network request for backoffice failed with response ' + response.status);
-
-
-            }
-        });
-
-    }
-
-      
-
+ 
     render() {
         return (
             <View style={styles.container}>
@@ -443,7 +273,7 @@ class DouzeMots extends Component {
                     &&!this.state.mots8 &&!this.state.mots9 &&!this.state.mots10 
                     &&!this.state.mots11 &&!this.state.mots12
                      || this.state.executed }
-                onPress={() =>this.validate()}
+                     onPress={() =>this.validate()}
                         style={{
                             marginTop: '6%', marginLeft: '16%', flexDirection: "row",
                             backgroundColor: "#2b2343", width: "70%", height: "70%",

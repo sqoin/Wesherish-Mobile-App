@@ -63,6 +63,7 @@ class WelcomePage extends Component {
                 <View style={styles.body}>
                
                 <View style={{marginTop: '0%'}}>
+                    <View  style={{marginBottom:'15%'}}>
                 {this.state.roleConnectedUser === 'ngo' &&  <Text style={{  marginTop: '0%', marginLeft: '2%',
                             color: '#FFF', fontSize: 26, textAlign: 'center' } }>
                                As first step , you have to scan the vendor QrCode
@@ -72,6 +73,8 @@ class WelcomePage extends Component {
                             color: '#FFF', fontSize: 26, textAlign: 'center' } }>
                                 As first step , you have to scan the beneficiary QrCode
                      </Text> } 
+
+                     </View>
                      
                      <Image source={require('../assetes/image.png')}
                           style={{width: 400, height: 400,marginRight: '1%',
@@ -81,21 +84,7 @@ class WelcomePage extends Component {
                
                   
 
-                       <TouchableOpacity onPress={() => { this.props.navigation.navigate('scanQr') }}
-                        style={{
-                            marginTop: '1%', marginLeft: '0%', flexDirection: "row",
-                            backgroundColor: "#2b2343", width: "100%", height: "15%",
-                            borderRadius: 5
-                        }}>
-
-                    
-                        <Text style={{
-                            marginTop: '5%', marginLeft: '40%',
-                            color: '#FFF', fontSize: 16, textAlign: 'center'
-                        }}>
-                           Next step
-                    </Text>
-                    </TouchableOpacity>
+                      
           
            
      
@@ -105,7 +94,21 @@ class WelcomePage extends Component {
 
                 <View style={styles.footer}>
 
-       
+                <TouchableOpacity onPress={() => { this.props.navigation.navigate('scanQr') }}
+                        style={{
+                            marginTop: '0%', marginLeft: '0%',
+                            backgroundColor: "#2b2343", width: "50%", height: "40%",
+                            borderRadius: 20, justifyContent:'center'
+                        }}>
+
+                    
+                        <Text style={{
+                              marginTop: '0%', marginLeft: '0%',
+                              color: '#FFF', fontSize: 16, textAlign: 'center'
+                        }}>
+                           Next 
+                    </Text>
+                    </TouchableOpacity>
                     
                 
                 </View>
@@ -130,6 +133,8 @@ const styles = StyleSheet.create({
     },
     footer: {
         flex: 1,
+        justifyContent:'center',
+        alignItems:'center',
     },
     logout:{
         marginRight: '0%',
