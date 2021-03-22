@@ -1,4 +1,6 @@
+
 import React, { Component } from 'react';
+import { version } from 'react';
 import {
     View, Text,Alert,
     TouchableOpacity, Button, StyleSheet,AsyncStorage
@@ -8,6 +10,11 @@ import {
   } from 'react-native-indicators';
 
   import {urlBlockchaine , urlBackEnd} from '../../utils'
+import Error from '../SVG/error';
+import Success from '../SVG/success';
+import Logout from '../SVG/logout';
+
+  
 class finalProcess extends Component {
 
     constructor(props) {
@@ -26,12 +33,13 @@ class finalProcess extends Component {
                 connectedUserRole:'',
                
                 //Messages Error / Success
-                message:"",
+                //message:"",
                 error :  0 ,
-                successMessage: 0,
+                successMessage:undefined,
                 result : undefined,
                 errorMessage : undefined,
-                test:'ameni'
+                test:'ameni',
+                txid : ''
 
         }
 
@@ -54,8 +62,9 @@ class finalProcess extends Component {
         //bind "this" for donation functionality
         this.getBalanceDonation = this.getBalanceDonation.bind(this);
         this.approveDonation = this.approveDonation.bind(this);
-        this.ConfirmburnDonationToken=this.ConfirmburnDonationToken.bind(this);
         this.burnDonationToken=this.burnDonationToken.bind(this);
+        this.ConfirmburnDonationToken=this.ConfirmburnDonationToken.bind(this);
+
         
     };
 
@@ -130,7 +139,7 @@ class finalProcess extends Component {
                      
                                 if (data[0].publickey === undefined){
 
-                                    self.setState({result : 1 , successMessage:0,message:"check your informations ! there is no user with this privatekey in our plateform"})
+                                    self.setState({result : 1 ,errorMessage:"This user is not a member on our platform , Please Verify your Informations!"})
 
                                 }else{
 
@@ -152,8 +161,8 @@ class finalProcess extends Component {
                         console.log(err) });
     
                 } else {
-                    self.setState({result : 1 , successMessage:0,message:'Network request for backoffice failed with response ' + response.status})
-                    alert("verify your informations please !")
+                    self.setState({result : 1 , errorMessage:'server Error , please try again Later!'})
+                    
                  
                 }
             });
@@ -183,24 +192,23 @@ class finalProcess extends Component {
             if (balanceValue === 0){
 
                 //alert("the vendeur has no balance ! ")
-                self.setState({   result : 1 , successMessage:0,message:"the vendeur has no balance ! "})
+                self.setState({   result : 1 , errorMessage:"the vendeur has no balance ! "})
             }else{
            
                 //approve donation
-               callback(self.burnDonationToken()) 
+               callback(self.burnDonationToken) 
 
             }
               
         }).catch(err => { console.log(err);
 
             //error while transaction
-            self.setState({result : 1 , successMessage:0,message:'error while transaction'})
+            self.setState({result : 1 , errorMessage:'Transaction Failed , please Try again!'})
           });
         
         } else {
         
-        console.log('Network request for backoffice failed with response ' + response.status);
-        self.setState({result : 1 , successMessage:0,message:'Network request for backoffice failed with response ' + response.status})
+        self.setState({result : 1 , errorMessage:'server Error , Please Try Later!'})
         
         }
         });}
@@ -235,7 +243,7 @@ class finalProcess extends Component {
        
     
                 if (balanceValue === 0){
-                    self.setState({result : 1 , successMessage:0,message:"No more vaccine for this  citizen ! "})
+                    self.setState({result : 1 , errorMessage:"No more vaccine for this  citizen ! "})
                    
                 }else{
            
@@ -249,7 +257,7 @@ class finalProcess extends Component {
             } else {
             
           
-            self.setState({result : 1 , successMessage:0,message:'Network request for backoffice failed with response ' + response.status})
+            self.setState({result : 1 , errorMessage:'Server Error , Please Try Later'})
             
             }
             })
@@ -283,28 +291,26 @@ class finalProcess extends Component {
                response.json().then(function (data) {
               console.log(JSON.stringify(data))
                 if (data.tx !==undefined){
-                   
-                    self.setState({result : 1 , successMessage:0,message:"approved successfully!"})
-
+                
                     //burnDonationToken
                     callback();
                    
                 }
                 else{
                 // console.log("Transaction failed , Try again please! ")
-                 self.setState({result : 1 , successMessage:0,message:"Transaction failed , Try again please!"})
+                 self.setState({result : 1 , errorMessage:"Transaction failed , Try again please!"})
                 
                 }
                 
 
                }).catch(err => { console.log(err);
-                self.setState({result : 1 , successMessage:0,message:"Transaction failed , Try again please!"})
+                self.setState({result : 1 , errorMessage:"Transaction failed , Try again please!"})
                 });
 
            } else {
             
 
-               self.setState({result : 1 , successMessage:0,message:'Network request for backoffice failed with response ' + response.status})
+               self.setState({result : 1 , errorMessage:'server Error Please Try Later!'})
            }
        });
 
@@ -313,6 +319,8 @@ class finalProcess extends Component {
    //approve vaccin
    approveVaccin (callback){
     let {connectedUserPublickey , userScanedPublickey , userScanedPrivateKey }=this.state;
+
+    console.log("approve address => "+ connectedUserPublickey + " "+userScanedPublickey +" "+userScanedPrivateKey)
 
    let data={
      "ngoAccount":connectedUserPublickey,
@@ -338,25 +346,20 @@ class finalProcess extends Component {
          
                 console.log("++++++"+JSON.stringify(data))
                 if (data.tx !==undefined){
-         
-                    //alert("approved successfully! ")
-                    self.setState({result : 1 , successMessage:0,message:"approved successfully! "})
-
+        
                     callback();  
                 }
                 else{
                
-                  alert("approval failed, Try again! ")
-                  self.setState({result : 1 , successMessage:0,message:"approval failed, Try again! "})
+                
+                  self.setState({result : 1 ,errorMessage:"Transaction Failed, Try again "})
                 }
              
 
             }).catch(err => { console.log(err) });
 
         } else {
-         self.setState({message:'Network request for backoffice failed with response ' + response.status})
-
-
+               self.setState({result : 1 ,errorMessage:'Server failed , Please Try again Later !'})
         }
     });
 
@@ -367,7 +370,7 @@ class finalProcess extends Component {
 
     let self =this;
     Alert.alert('Burn Donation ' , 'Are you sure about burning this token ?', [
-        {text:'NO' , onPress: ()=> alert("You didn't complete the burn process ! if you want to try again scan the code once again! ") , style:'cancel'},
+       {text:'NO' , onPress: ()=> this.cancelBurn()},
         {text:'YES' , onPress: ()=> self.ConfirmburnDonationToken() }
     ])
 
@@ -376,7 +379,8 @@ class finalProcess extends Component {
     ConfirmburnDonationToken(){
 
         let {connectedUserPublickey , connectedUserPrivateKey , userScanedPublickey , userScanedBalance}=this.state;
-     
+           
+        console.log("vendeur Balance => "+userScanedBalance)
         let data={
             "address":userScanedPublickey,//connectedUserPublickey
             "contenu":userScanedBalance,
@@ -396,26 +400,25 @@ class finalProcess extends Component {
             .then(function (response) {
             if (response.ok) {
             response.json().then(function (data) {  
+
+                console.log("transaction id => "+JSON.stringify(data))
     
-                console.log(self.connectedUserPrivateKey+' '+self.connectedUserPublickey+' '+self.userScanedPrivateKey+' '+self.userScanedBalance)
-                if (data.err !==undefined){
-                  
-                    self.setState({result : 1 , successMessage:0,message:'the donation burn was failed , please try again!'})
+                if (data.tx !== undefined){
+                    self.setState({result : 1 , successMessage:'Transaction was successfully completed ' , txid : data.tx})
                 }
                 else {
         
-                    self.setState({result : 1 , successMessage:0,message:"The token burning process was successfully completed!"+data.text})
+                    self.setState({result : 1 ,errorMessage:"Transaction Failed , please Try again!"})
          
                 }
             
             }).catch(err => {
               
-                 self.setState({message:'the donation burn was failed , please try again!'})
+                 self.setState({result : 1 , errorMessage:'server error , please Try again!'})
                 });
             } else {
             
-            self.setState({ serverMessage: "error on shared data" })
-            self.setState({result : 1 , successMessage:0,message:'Network request for backoffice failed with response ' + response.status})
+            self.setState({result : 1 , errorMessage:'server error , please Try again!'})
             
             
             }
@@ -423,22 +426,26 @@ class finalProcess extends Component {
     
     } 
 
-   
+   cancelBurn(){
+
+    this.setState({result : 1 , errorMessage:"You didn't complete the burn process ! if you want to try again you should rescan the qrcode!"})
+
+   }
       
         
     
-       burnVaccinToken(){
-    let self=this;
-    console.log("------------------"+this.connectedUserPublickey+' '+this.userScanedPublickey+' '+this.connectedUserPrivateKey)
+    burnVaccinToken(){
+
+      
         Alert.alert('Burn Vaccin ' , 'Are you sure about burning this token ?', [
-            {text:'NO' , onPress: ()=> alert("You didn't complete the burn process ! if you want to try again scan the code once again! ") , style:'cancel'},
-            {text:'YES' , onPress: ()=> self.ConfirmburnVaccinToken() }
+            {text:'NO' , onPress: ()=> this.cancelBurn()},
+            {text:'YES' , onPress: ()=> this.ConfirmburnVaccinToken() }
         ])
     
        }
         ConfirmburnVaccinToken(){
             let {connectedUserPublickey , connectedUserPrivateKey , userScanedPublickey }=this.state;
-            console.log(this.connectedUserPublickey+' '+this.userScanedPublickey+' '+this.connectedUserPrivateKey)
+            console.log(connectedUserPublickey+' '+userScanedPublickey+' '+connectedUserPrivateKey)
             let data={
                 "address":userScanedPublickey,//connectedUserPublickey
                 "from":connectedUserPublickey,//userScanedPublickey
@@ -460,28 +467,27 @@ class finalProcess extends Component {
                         if (response.ok) {
                             response.json().then(function (data) {
                                console.log("---"+JSON.stringify(data))
-                                if (data.err !==undefined){
-                            
-                                    self.setState({result : 1 , successMessage:0,message:'the vaccin burn was failed , please try again! '})
-                   
-                                }
-                                else {
-                                    self.setState({result : 1 , successMessage:0,message:'The token burning process was successfully completed!'})
-                                    
-                                }
-                             
-             
-                            }).catch(err => { console.log(err) });
-             
+                               if (data.tx !== undefined){
+                                self.setState({result : 1 , successMessage:'Transaction was successfully completed ' , txid : data.tx})
+                            }
+                            else {
+        
+                                self.setState({result : 1 ,  errorMessage:"Transaction Failed , please Try again!"})
+                     
+                            }
+                        
+                        }).catch(err => {
+                          
+                             self.setState({result : 1 , errorMessage:'server error , please Try again!'})
+                            });
                         } else {
-                            self.setState({result : 1 , successMessage:0,message:'Network request for backoffice failed with response ' + response.status})
-             
-             
+                        
+                        self.setState({ result : 1 , errorMessage:'server error , please Try again!'})
+                        
+                        
                         }
-                    });
-    
-    
-        }  
+                        });
+                    }
 
         Logout(){
             AsyncStorage.clear()
@@ -503,107 +509,119 @@ class finalProcess extends Component {
                         }}>
                      
                     </Text>
-                        <TouchableOpacity style={{
-                            marginRight: '0%',
-                            marginLeft: "43%",
-                            marginTop: '5%',
-                            backgroundColor: "#2b2343",borderRadius: 5
-                        }}
-                            
-                        >
-                           <Button
+                    <TouchableOpacity
+                          style ={styles.logout}
+                                onPress={() => { this.Logout()  }}>
+                                 <Logout  onPress={() => { this.Logout()  }} />
 
-                                 color="#2b2343"
-                                 style={{width: 70 }}
-                                 title='Log out'
-                                 onPress={() => { this.Logout()  }}>
-                            </Button>
-                        </TouchableOpacity>
+                     </TouchableOpacity>
                     </View>
                 </View>
                
                 <View style={styles.body}>
-                {this.state.successMessage ===  0 && this.state.error ===  0 &&
+
+
+                {this.state.successMessage !== undefined   &&
+
+
                 <View style={{marginTop: '0%'}}>
-                {this.state.connectedUserRole === 'vaccinTeam' && <Text style={{  marginTop: '0%', marginLeft: '2%',
-                            color: '#FFF', fontSize: 26, textAlign: 'center' } }>
-                               
-                   The beneficaire public key :
-                              
-                     </Text> }
+                {this.state.connectedUserRole === 'vaccinTeam' && <Text style={{  marginTop: '0%', marginLeft: '0%',
+                            color: '#FFF', fontSize: 20, textAlign: 'center' } }>The beneficaire public key :</Text> }
 
-                     {this.state.connectedUserRole === 'ngo' && <Text style={{  marginTop: '0%', marginLeft: '2%',
-                            color: '#FFF', fontSize: 26, textAlign: 'center' } }>
-                               
-                   The Vender public key :
-                              
-                     </Text> }
-                     <Text style={{  marginTop: '0%', marginLeft: '2%',
-                        color: '#FFF', fontSize: 26, textAlign: 'center' } }>
-                        {this.state.userScanedPublickey}
+                {this.state.connectedUserRole === 'ngo' && <Text style={{  marginTop: '0%', marginLeft: '0%',
+                            color: '#FFF', fontSize: 20, textAlign: 'center' } }>The Vender public key :</Text> }
 
-               
+                                       
+                                            
+                                  
 
-                          
+
+                <Text style={{  marginBottom: '7%', marginLeft: '0%',
+                        color: '#FFF', fontSize: 15, textAlign: 'center',  fontWeight: 'bold' } }>
+                        {this.state.userScanedPublickey}        
                  </Text> 
-                 <Text style={{  marginTop: '0%', marginLeft: '2%',
-                        color: '#FFF', fontSize: 26, textAlign: 'center' } }>
 
-                        {this.state.message}
+
+
+                 <View  style={styles.box} >
+                    <View style={styles.svg}><Success/></View>
+                    <Text style={styles.successtext}>SUCCESS</Text>
+                    <Text style={styles.paragraphSucess} >{this.state.successMessage}</Text>
+                    <Text style={styles.txidText} > Transaction Id : </Text> 
+                    <Text style={{   textAlign: 'center',
+                        fontSize: 12,
+                        color: 'black'}} >    {this.state.txid}</Text> 
+                 
+                </View>
+
               
-                 </Text> 
-                 {this.state.result === undefined &&  <UIActivityIndicator color='white' marginTop='85%' />}
-                   </View>}
+                   </View>
+                   
+                   }
+
+
+                {this.state.errorMessage !== undefined   &&
+                    <View  style={styles.box} >
+
+                    <View style={styles.svg}><Error/></View>
+                 
+                     <Text style={styles.errortext}>ERROR</Text>
+                    <Text style={styles.paragraph} >  {this.state.errorMessage}</Text>
+                    </View>  }
+
                
+               
+
+          
+
+               
+                    {this.state.result === undefined &&  <UIActivityIndicator color='white' marginTop='2%' />}
               
             
 
 
 
-                   <TouchableOpacity onPress={() => { this.props.navigation.navigate('WelcomeToApp') }}
+
+                   </View>
+                   
+                    
+          {this.state.result !== undefined  &&
+                <View style={styles.footer}>
+
+                <TouchableOpacity onPress={() => { this.props.navigation.navigate('WelcomePage') }}
                     style={{
-                        marginTop: '75%', marginLeft: '5%', flexDirection: "row",
-                        backgroundColor: "#2b2343", width: "40%", height: "10%",
-                        borderRadius: 20
+                         marginLeft: '5%', 
+                        backgroundColor: "#2b2343", width: "40%", height: "30%",
+                        borderRadius: 20 , justifyContent:'center'
                     }}>
 
                 
                     <Text style={{
-                        marginTop: '7%', marginLeft: '15%',
+                      
                         color: '#FFF', fontSize: 16, textAlign: 'center'
                     }}>
                         Scan Another QR
                 </Text>
                 </TouchableOpacity>
                 
-                <TouchableOpacity onPress={() => { this.props.navigation.navigate('scanQr') }}
+                <TouchableOpacity onPress={() => { this.props.navigation.navigate('WelcomeToApp') }}
                     style={{
-                        marginTop: '-12%', marginLeft: '55%', flexDirection: "row",
-                        backgroundColor: "#2b2343", width: "40%", height: "10%",
-                        borderRadius: 20
+                       marginLeft: '5%',
+                        backgroundColor: "#2b2343", width: "40%", height: "30%",
+                        borderRadius: 20,justifyContent:'center'
                     }}>
 
                 
                     <Text style={{
-                        marginTop: '7%', marginLeft: '25%',
+                      
                         color: '#FFF', fontSize: 16, textAlign: 'center'
                     }}>
                        Home page
                 </Text>
                 </TouchableOpacity>
-          
-           
-     
-                   </View>
-                   
-                    
-
-                <View style={styles.footer}>
-
-       
                     
                 
-                </View>
+                </View>}
             </View>
         )
     }
@@ -621,17 +639,92 @@ const styles = StyleSheet.create({
         //backgroundColor: "red"
     },
     body: {
-        //marginTop: '10%',
+        
         flex: 4,
-        //backgroundColor: "#fff"
+        justifyContent:'center',
+        //backgroundColor: "green"
 
+    },
+    logout:{
+        marginRight: '0%',
+        marginLeft: "43%",
+        marginTop: '5%',
     },
     footer: {
         flex: 1,
+        flexDirection: "row"
         //backgroundColor: "red"
     },
+    svg:{
+        marginBottom: '2%',
+        marginTop: '1%',
+        //backgroundColor:"green",
+        //height:"40%"
+       
+     
+    },
+    box: {
+        justifyContent:'center',
+        height: '70%',
+        width:"80%",
+        backgroundColor: 'white',
+        alignItems:'center',
+        //margin: 8,
+        marginTop: '0%', marginLeft: '10%'
+
+
+    },
+    paragraph: {
+
+    textAlign: 'center',
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#241c33'
+   
+  },
+
+  paragraphSucess: {
+
+    textAlign: 'center',
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#241c33',
+    marginBottom:'5%'
+   
+  },
+
+  txidText:{
+
+    textAlign: 'center',
+    marginBottom: '5%',
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#90EE90'
+  },
+
+  successtext: {
+
+    textAlign: 'center',
+    marginBottom: '5%',
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'green'
+   
+  },
+
+  errortext: {
+ 
+    textAlign: 'center',
+    marginBottom: '10%',
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'red'
+   
+  }
 
 
 });
+
+
 
 export default finalProcess;
