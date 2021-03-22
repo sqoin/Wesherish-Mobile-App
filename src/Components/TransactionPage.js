@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import { UIActivityIndicator } from 'react-native-indicators';
 import { DataTable } from 'react-native-paper';
-
+import Logout from '../SVG/logout';
 import { color } from 'react-native-reanimated';
 import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
 
@@ -16,7 +16,7 @@ class TransactionPage extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            // publickey: this.props.route.params.publickey ? this.props.route.params.publickey : "",
+             publickey: this.props.route.params.publickey ? this.props.route.params.publickey : "",
             //publickey : undefined , 
             error: 0,
             successMessage: 0,
@@ -212,30 +212,12 @@ class TransactionPage extends Component {
             <View style={styles.container}>
 
                 <View style={styles.header}>
-                    <View style={{ flexDirection: "row" }}>
-                        <Text style={{
-                            marginTop: '5%', marginLeft: '37%', fontWeight: 'bold',
-                            color: '#FFF', fontSize: 20, textAlign: 'center'
-                        }}>
+                    <TouchableOpacity
+                          style ={styles.logout}
+                                onPress={() => { this.Logout()  }}>
+                                 <Logout  onPress={() => { this.Logout()  }} />
 
-                        </Text>
-                        <TouchableOpacity style={{
-                            marginRight: '0%',
-                            marginLeft: "43%",
-                            marginTop: '5%',
-                            backgroundColor: "#2b2343", borderRadius: 5
-                        }}
-
-                        >
-                            <Button
-
-                                color="#2b2343"
-                                style={{ width: 70 }}
-                                title='Log out'
-                                onPress={() => { this.Logout() }}>
-                            </Button>
-                        </TouchableOpacity>
-                    </View>
+                     </TouchableOpacity>
                     <View style={{ flexDirection: "row" }}>
                         <Text style={{
                             marginTop: '5%', marginLeft: '37%', fontWeight: 'bold',
@@ -286,7 +268,7 @@ class TransactionPage extends Component {
                                 color: '#FFF', fontSize: 26, textAlign: 'center'
                             }}>
 
-                                You are welcome
+                               Transaction List
                                     </Text>}
 
                     </View>
@@ -341,6 +323,11 @@ const styles = StyleSheet.create({
     footer: {
         flex: 1,
         //backgroundColor: "red"
+    },
+    logout:{
+        marginRight: '0%',
+        marginLeft: "80%",
+        marginTop: '5%',
     },
 
 
