@@ -41,7 +41,7 @@ class TransactionPage extends Component {
     componentDidMount = () => {
 
 
-
+console.log("publiccc =< "+this.state.publickey)
         this.getAllUsersAndPublicKeys();
 
     }
@@ -64,9 +64,9 @@ class TransactionPage extends Component {
 
         var u = new Date(unixtime * 1000);
 
-        return u.getUTCFullYear() +
+        return  ('0' + u.getUTCDate()).slice(-2) +
             '-' + ('0' + u.getUTCMonth()).slice(-2) +
-            '-' + ('0' + u.getUTCDate()).slice(-2) +
+            '-'+u.getUTCFullYear() +
             ' ' + ('0' + u.getUTCHours()).slice(-2) +
             ':' + ('0' + u.getUTCMinutes()).slice(-2) 
            
@@ -81,6 +81,8 @@ class TransactionPage extends Component {
             .then(function (response) {
                 if (response.ok) {
                     response.json().then(function (usersList) {
+
+
                         self.transactiontabledonation(self.state.publickey, usersList);
                         self.transactiontablevaccin(self.state.publickey, usersList);
                     }).catch(err => {
@@ -94,23 +96,7 @@ class TransactionPage extends Component {
 
 
     }
-    /*   filtrename(){
- 
- 
-     dataUser.map(element=>{
-             let userfrom= DataTable.filtre(user=>{
-                 return(user.publickey&&user.publickey.includes(element.from))})
-             
-             let userto= DataTable.filtre(user=>{
-                 return(user.publickey&&user.publickey.includes(element.to))})
-                 element.userfrom=userform.length==0 ?  element.from :userfrom[0].firstname+' '+userfrom[0].lastname
-                 element.userto=userto.length==0 ?  element.from :userto[0].firstname+' '+userto[0].lastname
-                 this.transactions.push(element)
-             }) 
- 
-       
-      }
-  */
+    
     transactiontablevaccin(from, usersList) {
 
         var ret = [];
@@ -121,7 +107,7 @@ class TransactionPage extends Component {
                 "Content-Type": "application/json",
                 "Accept": "application/json"
             },
-            body: JSON.stringify({ "query": "{transactions(where:{from:\"0x22d505dcc5a360e6679210415b81fb891c28fba8\"}){id from to value type status timestamp}}" })
+            body: JSON.stringify({ "query": "{transactions(where:{from:"+'\"'+from+'\"'+"}){id from to value type status timestamp}}" })
             //transactions(where:{from:"+'\"'+from+'\"'+"})
 
         })
@@ -129,6 +115,8 @@ class TransactionPage extends Component {
             .then(function (response) {
                 if (response.ok) {
                     response.json().then(function (data) {
+
+                        console.log("dattttta =< "+JSON.stringify(data))
                         data.data.transactions.map(tr => {
                             usersList.map(user => {
                                 tr.from = (user.publickey ? user.publickey.toLowerCase() : "") == tr.from.toLowerCase() ? user.firstname + " " + user.lastname : tr.from
@@ -136,11 +124,13 @@ class TransactionPage extends Component {
                             })
                             var list = [tr.to, tr.from, tr.type, tr.value, self.getTime(tr.timestamp)]
                             self.transactions.push(list)
+                            var list1 = ['','', '', '', '']
+                                self.transactions.push(list1)
                             self.setState({ busy: false })
 
 
                         })
-
+                        self.setState({ busy: false })
 
                     }).catch(err => {
                         self.setState({ message: 'Non!' })
@@ -166,7 +156,7 @@ class TransactionPage extends Component {
                 "Content-Type": "application/json",
                 "Accept": "application/json"
             },
-            body: JSON.stringify({ "query": "{transactions(where:{from:\"0x22d505dcc5a360e6679210415b81fb891c28fba8\"}){id from to value type status timestamp}}" })
+            body: JSON.stringify({ "query": "{transactions(where:{from:"+'\"'+from+'\"'+"}){id from to value type status timestamp}}" })
             //transactions(where:{from:"+'\"'+from+'\"'+"})
 
         })
@@ -174,6 +164,7 @@ class TransactionPage extends Component {
             .then(function (response) {
                 if (response.ok) {
                     response.json().then(function (data) {
+                        console.log("dattttta Donation=< "+JSON.stringify(data))
                         if (data) {
                             data.data.transactions.map(tr => {
                                 usersList.map(user => {
@@ -181,14 +172,16 @@ class TransactionPage extends Component {
                                     tr.to = (user.publickey ? user.publickey.toLowerCase() : "") == tr.to.toLowerCase() ? user.firstname + " " + user.lastname : tr.to
                                 })
                                 var list = [tr.to, tr.from, tr.type, tr.value, self.getTime(tr.timestamp)]
-                                self.setState({ busy: false })
+                                var list1 = ['','', '', '', '']
+                                self.transactions.push(list1)
                                 self.transactions.push(list)
+                                self.setState({ busy: false })
                             })
 
 
 
                         }
-
+                        self.setState({ busy: false })
 
 
                     }).catch(err => {
@@ -264,12 +257,9 @@ class TransactionPage extends Component {
 
                         {this.state.error === 0 &&
                             <Text style={{
-                                marginTop: '0%', marginLeft: '2%',
+                                marginTop: '-10%', marginLeft: '2%',
                                 color: '#FFF', fontSize: 26, textAlign: 'center'
-                            }}>
-
-                               Transaction List
-                                    </Text>}
+                            }}> Transactions List </Text>}
 
                     </View>
 

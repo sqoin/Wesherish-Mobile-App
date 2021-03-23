@@ -445,7 +445,7 @@ class finalProcess extends Component {
        }
         ConfirmburnVaccinToken(){
             let {connectedUserPublickey , connectedUserPrivateKey , userScanedPublickey }=this.state;
-            console.log(connectedUserPublickey+' '+userScanedPublickey+' '+connectedUserPrivateKey)
+            console.log("herrrrrre "+connectedUserPublickey+' '+userScanedPublickey+' '+connectedUserPrivateKey)
             let data={
                 "address":userScanedPublickey,//connectedUserPublickey
                 "from":connectedUserPublickey,//userScanedPublickey
@@ -679,7 +679,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 15,
     fontWeight: 'bold',
-    color: '#241c33'
+    color: '#241c33',
+    
    
   },
 
