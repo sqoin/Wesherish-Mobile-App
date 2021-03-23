@@ -259,7 +259,10 @@ console.log("publiccc =< "+this.state.publickey)
                             <Text style={{
                                 marginTop: '-10%', marginLeft: '2%',
                                 color: '#FFF', fontSize: 26, textAlign: 'center'
-                            }}> Transactions List </Text>}
+                            }}>
+
+                               Transactions List
+                                    </Text>}
 
                     </View>
 
