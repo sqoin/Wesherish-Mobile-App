@@ -111,7 +111,7 @@ class Menu extends Component {
                                 marginTop: '0%', marginLeft: '20%',
                                 color: '#fff', fontSize: 14, textAlign: 'center'
                             }}>
-                                 Capital total 
+                                 Balance 
                     </Text>
                             <Text style={{
                                 marginTop: '0%', marginLeft: '0%', fontWeight: 'bold',
@@ -126,66 +126,7 @@ class Menu extends Component {
                     </View>
                 </View>
                 <View style={styles.body}>
-                    <View style={{
-                        marginTop: '0%', marginLeft: '0%',
-                        backgroundColor: "#2c2444", width: "90%", height: "50%"
-                    }}>
-                        <View style={{
-                            flexDirection: "row"
-                        }}>
-                            <ImageBackground
-                                //source={{ uri: this.state.companyLogo }}
-                                source={require('../assetes/!.png')}
-                                style={{
-                                    width: 40, height: 40,
-                                    // borderWidth: 1,
-                                    //borderColor: 'black',
-                                    marginRight: '0%',
-                                    marginLeft: "1%",
-                                    marginTop: '3%',
-                                    //9borderWidth: 1
-                                }}
-                            ></ImageBackground>
-                            <Text style={{
-                                marginTop: '4%', marginLeft: '3%',
-                                color: '#fff', fontSize: 20
-                            }}>
-                                Une action est requise
-                    </Text>
-                            <ImageBackground
-                                //source={{ uri: this.state.companyLogo }}
-                                source={require('../assetes/Xb.png')}
-                                style={{
-                                    width: 40, height: 40,
-                                    // borderWidth: 1,
-                                    //borderColor: 'black',
-                                    marginRight: '0%',
-                                    marginLeft: "15%",
-                                    marginTop: '3%',
-                                    //9borderWidth: 1
-                                }}
-                            ></ImageBackground>
-                        </View>
-                        <Text style={{
-                            marginTop: '3%', marginLeft: '15%',
-                            color: '#fff', fontSize: 16, width: "80%"
-                        }}>
-                            Paramétrez votre clé papier au cas où vouz perdriez ou
-                            remplaceriez votre téléphone. Votre clé sera également requise si vous
-                            modifiez les Paramétres de sécurite de votre téléphone.
-
-                    </Text>
-                        <TouchableOpacity
-                        //onPress={() => { this.props.navigation.navigate('testPage') }}
-                        >
-                            <Text style={{
-                                marginTop: '5%', marginLeft: '15%',
-                                color: '#4e50a9', fontSize: 14
-                            }}>
-                                Continuer
-                    </Text>
-                        </TouchableOpacity>
-                    </View>
+                 
                     <TouchableOpacity onPress={() => { this.props.navigation.navigate('WeCoin') }}
                         style={{
                             marginTop: '5%', marginLeft: '0%', flexDirection: "row",

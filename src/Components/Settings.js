@@ -37,7 +37,7 @@ class testPage extends Component {
                             marginTop: '5%', marginLeft: '40%', fontWeight: 'bold',
                             color: '#FFF', fontSize: 20, textAlign: 'center'
                         }}>
-                            Paramétres
+                            Settings
                     </Text>
                         <TouchableOpacity style={{
                             marginRight: '0%',
@@ -85,10 +85,10 @@ class testPage extends Component {
                             marginTop: '5%', marginLeft: '3%',
                             color: '#FFF', fontSize: 16, textAlign: 'center'
                         }}>
-                            Scanner le code QR
+                            Scan QR Code
                     </Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => { this.props.navigation.navigate('GeneratorQRCode') }}
+                 {/*    <TouchableOpacity onPress={() => { this.props.navigation.navigate('GeneratorQRCode') }}
                         style={{
                             marginTop: '1%', marginLeft: '0%', flexDirection: "row",
                             backgroundColor: "#2b2343", width: "100%", height: "15%",
@@ -114,7 +114,7 @@ class testPage extends Component {
                         }}>
                             Préférences
                     </Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> 
                     <View style={{
                         marginTop: '1%', marginLeft: '0%', flexDirection: "row",
                         backgroundColor: "#2b2343", width: "100%", height: "15%",
@@ -166,7 +166,7 @@ class testPage extends Component {
                         }}>
                             A propos de
                     </Text>
-                    </View>
+                    </View>*/}
                     <TouchableOpacity onPress={() => { this.Logout() }}
                         style={{
                             marginTop: '1%', marginLeft: '0%', flexDirection: "row",

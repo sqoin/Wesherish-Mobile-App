@@ -65,12 +65,12 @@ class DouzeMots extends Component {
             
             }).catch(err => { 
                 console.log(err) 
-            alert('verify your words!')
+            alert('Wrong words , Verify your information!')
             });
                       
             } else {
             console.log('Network request for backoffice failed with response ' + response.status);
-            alert('verify your words!')
+            alert('Wrong words , Verify your information!')
             }
             });
     }

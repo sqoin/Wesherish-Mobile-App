@@ -38,15 +38,22 @@ class LoginQR extends Component {
                 
                 </View>
                 <View style={styles.body}>
+                   <Text style={styles.text}>Scan QR Code</Text> 
+                  
                     <QRCodeScanner
                         onRead={this.onSuccess.bind()} 
                         containerStyle={{ marginTop: 0 }}
                         cameraStyle={{
                             height: 200, marginTop: 0, width: 220,
-                            alignSelf: 'center', justifyContent: 'center'
+                            alignSelf: 'center', justifyContent: 'center',
+                          
                         }}
+                        reactivate='true'
+                     
+                       
+                       
                     />
-
+                  
                 </View>
                 <View style={styles.footer}>
 
@@ -70,8 +77,15 @@ const styles = StyleSheet.create({
     body: {
         //marginTop: '10%',
         flex: 4,
+        justifyContent:'center'
         //backgroundColor: "#fff"
 
+    },
+    text:{
+        textAlign:'center',
+        color:'white',
+        fontSize: 20,
+        fontWeight: 'bold',
     },
     footer: {
         flex: 1,

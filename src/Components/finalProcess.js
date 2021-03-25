@@ -529,7 +529,7 @@ class finalProcess extends Component {
                             color: '#FFF', fontSize: 20, textAlign: 'center' } }>The beneficaire public key :</Text> }
 
                 {this.state.connectedUserRole === 'ngo' && <Text style={{  marginTop: '0%', marginLeft: '0%',
-                            color: '#FFF', fontSize: 20, textAlign: 'center' } }>The Vender public key :</Text> }
+                            color: '#FFF', fontSize: 20, textAlign: 'center' } }>The vendor public key :</Text> }
 
                                        
                                             
@@ -590,7 +590,7 @@ class finalProcess extends Component {
 
                 <TouchableOpacity onPress={() => { this.props.navigation.navigate('WelcomePage') }}
                     style={{
-                         marginLeft: '5%', 
+                         marginLeft: '0%', 
                         backgroundColor: "#2b2343", width: "40%", height: "30%",
                         borderRadius: 20 , justifyContent:'center'
                     }}>
@@ -652,7 +652,8 @@ const styles = StyleSheet.create({
     },
     footer: {
         flex: 1,
-        flexDirection: "row"
+        flexDirection: "row",
+        justifyContent:'center',
         //backgroundColor: "red"
     },
     svg:{

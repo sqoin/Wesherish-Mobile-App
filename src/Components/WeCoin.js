@@ -101,14 +101,12 @@ const styles = StyleSheet.create({
 
     container: {
         flex: 1,
-        //backgroundColor: "black"
     },
     header: {
         flex: 2,
         backgroundColor: "#f39404"
     },
     body: {
-        //marginTop: '10%',
         flex: 3,
         backgroundColor: "#fff"
 

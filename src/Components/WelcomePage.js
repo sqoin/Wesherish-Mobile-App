@@ -61,33 +61,24 @@ class WelcomePage extends Component {
                     </View>
                 </View>
                 <View style={styles.body}>
-               
-                <View style={{marginTop: '0%'}}>
-                    <View  style={{marginBottom:'15%'}}>
-                {this.state.roleConnectedUser === 'ngo' &&  <Text style={{  marginTop: '0%', marginLeft: '2%',
+                   
+                {this.state.roleConnectedUser === 'ngo' &&  <Text style={{  marginTop: '0%', marginLeft: '0%',
                             color: '#FFF', fontSize: 26, textAlign: 'center' } }>
                                As first step , you have to scan the vendor QrCode
                      </Text> } 
 
-                {this.state.roleConnectedUser === 'vaccinTeam' &&  <Text style={{  marginTop: '0%', marginLeft: '2%',
+                 {this.state.roleConnectedUser === 'vaccinTeam' &&  <Text style={{  marginTop: '0%', marginLeft: '0%',
                             color: '#FFF', fontSize: 26, textAlign: 'center' } }>
                                 As first step , you have to scan the beneficiary QrCode
                      </Text> } 
 
-                     </View>
-                     
-                     <Image source={require('../assetes/image.png')}
-                          style={{width: 400, height: 400,marginRight: '1%',
-                          marginLeft: "1%"}} />
-
-                   </View>
-               
                   
-
-                      
-          
-           
-     
+                     <View  style={{marginTop:'10%' , justifyContent:'center' , alignItems:'center'}}>
+                     <Image source={require('../assetes/image.png')}
+                          style={{width: 300, height: 300,marginRight: '1%',
+                          marginLeft: "1%"}} />
+                        </View>
+                  
                    </View>
                    
                     
@@ -129,6 +120,7 @@ const styles = StyleSheet.create({
     },
     body: {
         flex: 4,
+        justifyContent:'center',
 
     },
     footer: {

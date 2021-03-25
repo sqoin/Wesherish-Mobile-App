@@ -37,51 +37,45 @@ class WelcomeToApp extends Component {
             </View>
             <View style={styles.body}>
            
-            <View style={{marginTop: '0%'}}>
+            <View style={{  alignItems: 'center'  }}>
                
                  
                  <Image source={require('../assetes/Logo.png')}
-                      style={{width: 400, height: 400,marginRight: '1%',
-                      marginLeft: "1%",marginTop: '10%'}} />
-                 <Text style={{  marginTop: '0%', marginLeft: '30%',
-                        color: '#FFF', fontSize: 26, textAlign: 'center' } }>
-                         
-                 </Text>
+                      style={{width: 300, height: 300,
+                      marginLeft: "0%",marginTop: '10%'  }} />
+               
                </View>
 
 
+                <View style={{   flexDirection: "row" , justifyContent:'center'}}>
                    <TouchableOpacity onPress={() => { this.props.navigation.navigate('LoginQR') }}
                     style={{
-                        marginTop: '0%', marginLeft: '5%', flexDirection: "row",
-                        backgroundColor: "#2b2343", width: "40%", height: "10%",
+                        marginTop: '0%',   marginLeft: '0%', 
+                        backgroundColor: "#2b2343", width: "40%", height: "40%", justifyContent:'center',
                         borderRadius: 20
                     }}>
 
                 
-                    <Text style={{
-                        marginTop: '7%', marginLeft: '30%',
-                        color: '#FFF', fontSize: 16, textAlign: 'center'
-                    }}>
+                    <Text style={{ color: '#FFF', fontSize: 16, textAlign: 'center'}}>
                         Scan QR
                 </Text>
                 </TouchableOpacity>
                 
                 <TouchableOpacity onPress={() => { this.props.navigation.navigate('DouzeMots') }}
-                    style={{
-                        marginTop: '-12%', marginLeft: '55%', flexDirection: "row",
-                        backgroundColor: "#2b2343", width: "40%", height: "10%",
+                    style={{   marginLeft: '5%', 
+                        backgroundColor: "#2b2343", width: "40%", height: "40%", justifyContent:'center',
                         borderRadius: 20
                     }}>
 
                 
                     <Text style={{
-                        marginTop: '7%', marginLeft: '39%',
+
                         color: '#FFF', fontSize: 16, textAlign: 'center'
                     }}>
                        Login
                 </Text>
                 </TouchableOpacity>
-      
+                </View>
        
  
                </View>
@@ -106,20 +100,15 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#241c33"
     },
-    header: {
-        flex: 1,
-        //backgroundColor: "red"
-    },
+  
     body: {
-        //marginTop: '10%',
-        flex: 4,
+        marginBottom: '40%',
+        flex: 1,
+        justifyContent:'center'
         //backgroundColor: "#fff"
 
     },
-    footer: {
-        flex: 1,
-        //backgroundColor: "red"
-    },
+  
 
 
 });

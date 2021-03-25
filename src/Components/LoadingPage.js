@@ -172,7 +172,7 @@ class LoadingPage extends Component {
             if (response.ok) {
                 response.text().then(function (text) {
                     if (text ==="true" ){
-                        self.setState({result : 1 , successMessage:'Your current Role is Vendeur' , role:"Vendeur"}) 
+                        self.setState({result : 1 , successMessage:'Your current Role is vendor' , role:"vendor"}) 
                         
                     }else if (JSON.parse(text).err !==undefined){
                         self.setState({result : 1 , error:1 , errorMessage:"server Error, Please Try Again Later!"})  

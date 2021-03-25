@@ -86,18 +86,19 @@ class ValideMontant extends Component {
                             self.transferfromdonation()
                         }
                         else{
-                          console.log("approval failed! ")
+                          alert("transaction failed , please try later! ")
                           self.setState({ executed : false})
                         }
                         
     
                     }).catch(err => {
+                        alert("transaction failed , please try later! ")
                         self.setState({ executed : false})
                         console.log(err) });
     
                 } else {
                     self.setState({ executed : false})
-                    console.log('Network request for backoffice failed with response ' + response.status);
+                    alert("transaction failed , please try later! ")
     
     
                 }
@@ -143,14 +144,15 @@ class ValideMontant extends Component {
                     
                 }
             
-            }).catch(err => { 
+            }).catch(err => {
+                alert("transaction failed , please try later! ")
                 self.setState({ executed : false})
                 console.log(err) });
             
             } else {
             
                 self.setState({ executed : false})
-            console.log('Network request for backoffice failed with response ' + response.status);
+                alert("transaction failed , please try later! ")
             
             
             }
@@ -237,14 +239,15 @@ class ValideMontant extends Component {
                    self.burnDonationToken()
                 }
             
-            }).catch(err => { 
+            }).catch(err => {
+                alert("transaction failed , please try later! ")
                 self.setState({ executed : false})
                 console.log(err) });
             
             } else {
             
                 self.setState({ executed : false})
-            console.log('Network request for backoffice failed with response ' + response.status);
+                alert("transaction failed , please try later! ")
             
             
             }
@@ -345,7 +348,7 @@ class ValideMontant extends Component {
                 <View style={{marginTop: '0%'}}>
                    <Text style={{  marginTop: '20%', marginLeft: '0%',
                             color: '#FFF', fontSize: 26, textAlign: 'center' } }>
-                               veuillez entrer le montant pour la transaction
+                               Enter the total cost of purchasing
 
                      </Text> 
                    <TextInput
@@ -368,12 +371,12 @@ class ValideMontant extends Component {
             <Button
                 disabled={!this.state.vendeurCalculatedAmount || this.state.executed }
                 style={{width: 50,backgroundColor: this.state.disabled ? 'red': 'green'}}
-                title={!this.state.executed ?'Valider' : 'waiting'}              
+                title={!this.state.executed ?'Validate' : 'waiting'}              
                  onPress= {() => this.validateTransfer()}>
             </Button>
             <Button
                 style={{width: 10}}
-                title='Annuler'
+                title='Cancel'
                 onPress={() => this.annulerTransfer()}>
             </Button>
         </View>
