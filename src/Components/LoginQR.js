@@ -48,7 +48,7 @@ class LoginQR extends Component {
                             alignSelf: 'center', justifyContent: 'center',
                           
                         }}
-                        reactivate='true'
+                       
                      
                        
                        

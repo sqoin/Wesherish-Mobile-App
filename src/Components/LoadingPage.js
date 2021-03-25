@@ -172,7 +172,7 @@ class LoadingPage extends Component {
             if (response.ok) {
                 response.text().then(function (text) {
                     if (text ==="true" ){
-                        self.setState({result : 1 , successMessage:'Your current Role is vendor' , role:"vendor"}) 
+                        self.setState({result : 1 , successMessage:'Your current Role is vendor' , role:"vendeur"}) 
                         
                     }else if (JSON.parse(text).err !==undefined){
                         self.setState({result : 1 , error:1 , errorMessage:"server Error, Please Try Again Later!"})  
@@ -269,7 +269,7 @@ class LoadingPage extends Component {
 
     let {role}=this.state
     //alert(role)
-     if(role==="Vendeur"){
+     if(role==="vendeur"){
     this.props.navigation.navigate('Menu')
      }else {
         this.props.navigation.navigate('WelcomePage')
